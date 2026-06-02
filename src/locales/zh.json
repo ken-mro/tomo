@@ -28,6 +28,10 @@
     "heading": "歇一会儿吧",
     "subheading": "伸个懒腰，喝口水，让眼睛离开屏幕。"
   },
+  "focus": {
+    "heading": "专注时间",
+    "subheading": "开始吧——tomo 一直陪着你。"
+  },
   "alarm": {
     "heading": "时间到！",
     "stop": "停止闹铃"

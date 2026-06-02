@@ -789,13 +789,6 @@ input[type='range'] {
     row-gap: 10px;
     padding: 12px clamp(14px, 4vw, 26px);
   }
-  /* Work mode has no break banner — drop that row so the ring stays centred
-     against the right column. */
-  .mode-work .timer-card {
-    grid-template-areas:
-      'stage tabs'
-      'stage side';
-  }
   .timer-stage {
     grid-area: stage;
   }

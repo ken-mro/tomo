@@ -112,8 +112,12 @@ export function useTimer(settings: Settings, onIntervalEnd: (e: IntervalEnd) => 
 
   const clearAlarm = () => setAlarmRinging(false)
 
-  // Clear today's count. The persistence effect saves it under today's date.
-  const clearToday = useCallback(() => setTodayCount(0), [])
+  // Clear today's progress: both the daily count and the long-break cycle dots.
+  // The persistence effect saves them under today's date.
+  const clearToday = useCallback(() => {
+    setTodayCount(0)
+    setCycleCount(0)
+  }, [])
 
   const toggle = useCallback(() => {
     setAlarmRinging(false)

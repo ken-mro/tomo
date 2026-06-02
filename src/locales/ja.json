@@ -28,6 +28,10 @@
     "heading": "ひと息つきましょう",
     "subheading": "伸びをして、水を飲んで、画面から目を離して。"
   },
+  "focus": {
+    "heading": "集中の時間",
+    "subheading": "さあ始めましょう。tomo がそばで応援しています。"
+  },
   "alarm": {
     "heading": "時間です！",
     "stop": "アラームを止める"

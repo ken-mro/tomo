@@ -29,6 +29,10 @@
     "heading": "Hora de respirar",
     "subheading": "Estírate, bebe agua y aparta la vista de la pantalla."
   },
+  "focus": {
+    "heading": "Hora de concentrarse",
+    "subheading": "Acomódate — tomo está aquí contigo."
+  },
   "alarm": {
     "heading": "¡Se acabó el tiempo!",
     "stop": "Detener alarma"
