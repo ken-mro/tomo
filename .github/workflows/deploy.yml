@@ -1,11 +1,9 @@
 name: Deploy to GitHub Pages
 
 on:
-  # Deploy on every push to the default branch.
+  # Deploy only on pushes to main — this workflow targets the main branch.
   push:
-    branches: [main, master]
-  # Allow manual runs from the Actions tab.
-  workflow_dispatch:
+    branches: [main]
 
 # Permissions required by the Pages deployment.
 permissions:
