@@ -30,7 +30,9 @@ export default defineConfig({
         start_url: './',
         scope: './',
         display: 'standalone',
-        orientation: 'portrait',
+        // Allow both portrait and landscape; rotation follows the device's own
+        // rotation-lock setting rather than being forced by the app.
+        orientation: 'any',
         background_color: '#FDEAE0',
         theme_color: '#F0564B',
         categories: ['productivity', 'utilities'],
