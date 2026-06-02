@@ -16,7 +16,8 @@
     "pauseAria": "Pause timer",
     "resumeAria": "Resume timer",
     "resetAria": "Reset current interval",
-    "skipAria": "Skip to next interval"
+    "skipAria": "Skip to next interval",
+    "adjustHint": "Drag around the circle to adjust the time"
   },
   "progress": {
     "today": "Today",

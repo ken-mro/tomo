@@ -294,6 +294,15 @@ button,
   display: grid;
   place-items: center;
 }
+/* While paused, the ring acts as a dial to adjust the time. touch-action:none
+   so dragging around it adjusts instead of scrolling the page. */
+.timer-stage.is-adjustable {
+  cursor: grab;
+  touch-action: none;
+}
+.timer-stage.is-adjustable:active {
+  cursor: grabbing;
+}
 .timer-side {
   display: flex;
   flex-direction: column;

@@ -16,7 +16,8 @@
     "pauseAria": "タイマーを一時停止",
     "resumeAria": "タイマーを再開",
     "resetAria": "現在の区切りをリセット",
-    "skipAria": "次の区切りへスキップ"
+    "skipAria": "次の区切りへスキップ",
+    "adjustHint": "円に沿ってドラッグして時間を調整"
   },
   "progress": {
     "today": "今日",

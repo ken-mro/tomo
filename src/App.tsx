@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 
 import { Header } from './components/Header'
-import { ModeTabs, MODE_ORDER } from './components/ModeTabs'
+import { ModeTabs } from './components/ModeTabs'
 import { TimerRing } from './components/TimerRing'
 import { ProgressDots } from './components/ProgressDots'
 import { Controls } from './components/Controls'
@@ -14,7 +14,7 @@ import { PipTimer } from './components/PipTimer'
 import { useTimer, type IntervalEnd } from './hooks/useTimer'
 import { useTheme } from './hooks/useTheme'
 import { usePip } from './hooks/usePip'
-import { useSwipeNav } from './hooks/useSwipeNav'
+import { useRingDial } from './hooks/useRingDial'
 
 import type { Settings } from './types'
 import { loadSettings, saveSettings, DEFAULT_SETTINGS } from './lib/storage'
@@ -210,16 +210,9 @@ export default function App() {
       })
   }, [])
 
-  // Step through the tabs by one position (clamped), reused by swipe gestures.
-  const stepMode = useCallback(
-    (dir: -1 | 1) => {
-      const i = MODE_ORDER.indexOf(timer.mode)
-      const next = MODE_ORDER[Math.min(MODE_ORDER.length - 1, Math.max(0, i + dir))]
-      if (next !== timer.mode) timer.selectMode(next)
-    },
-    [timer],
-  )
-  const swipe = useSwipeNav(() => stepMode(-1), () => stepMode(1))
+  // Drag around the ring like a dial to adjust the time while paused.
+  const canAdjust = !timer.running && !timer.alarmRinging
+  const dial = useRingDial(canAdjust, timer.remainingMs, timer.adjustRemaining)
 
   const isBreak = timer.mode !== 'work'
   const appClass = useMemo(
@@ -241,7 +234,7 @@ export default function App() {
         onOpenSettings={() => setSettingsOpen(true)}
       />
 
-      <main className="timer-card" {...swipe}>
+      <main className="timer-card">
         <ModeTabs mode={timer.mode} onSelect={timer.selectMode} />
 
         {/* The banner is always rendered (with a focus message during work) so
@@ -258,7 +251,11 @@ export default function App() {
           </div>
         </div>
 
-        <div className="timer-stage">
+        <div
+          className={`timer-stage${canAdjust ? ' is-adjustable' : ''}`}
+          title={canAdjust ? t('controls.adjustHint') : undefined}
+          {...dial}
+        >
           <TimerRing
             mode={timer.mode}
             remainingMs={timer.remainingMs}
