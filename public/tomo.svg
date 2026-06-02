@@ -1,0 +1,14 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="tomo">
+  <title>tomo</title>
+  <rect width="120" height="120" rx="26" fill="#FDEAE0"/>
+  <ellipse cx="60" cy="66" rx="40" ry="37" fill="#F0564B" stroke="#D8453B" stroke-width="2"/>
+  <path d="M60 31 C48 29 37 24 33 17 C45 17 56 23 60 30 Z" fill="#5FB85C"/>
+  <path d="M60 31 C72 29 83 24 87 17 C75 17 64 23 60 30 Z" fill="#5FB85C"/>
+  <path d="M60 30 L60 19" stroke="#3E9A4A" stroke-width="4" stroke-linecap="round"/>
+  <path d="M95 64 Q104 56 102 47" stroke="#D8453B" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <circle cx="102" cy="45" r="5" fill="#F0564B" stroke="#D8453B" stroke-width="2"/>
+  <circle cx="49" cy="63" r="3.2" fill="#3A2A28"/><circle cx="71" cy="63" r="3.2" fill="#3A2A28"/>
+  <circle cx="50" cy="62" r="1" fill="#fff"/><circle cx="72" cy="62" r="1" fill="#fff"/>
+  <circle cx="43" cy="75" r="5" fill="#FF9B8A" opacity="0.55"/><circle cx="77" cy="75" r="5" fill="#FF9B8A" opacity="0.55"/>
+  <path d="M48 75 Q60 87 72 75" fill="none" stroke="#3A2A28" stroke-width="2.6" stroke-linecap="round"/>
+</svg>

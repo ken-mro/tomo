@@ -1,0 +1,90 @@
+{
+  "tagline": "amigo de concentración",
+  "mode": {
+    "group": "Modo del temporizador",
+    "work": "Trabajo",
+    "short": "Descanso corto",
+    "long": "Descanso largo"
+  },
+  "controls": {
+    "start": "Empezar",
+    "pause": "Pausar",
+    "resume": "Reanudar",
+    "reset": "Reiniciar",
+    "skip": "Saltar",
+    "startAria": "Iniciar temporizador",
+    "pauseAria": "Pausar temporizador",
+    "resumeAria": "Reanudar temporizador",
+    "resetAria": "Reiniciar el intervalo actual",
+    "skipAria": "Saltar al siguiente intervalo"
+  },
+  "progress": {
+    "today": "Hoy",
+    "pomodoros": "{{count}} pomodoro completado hoy",
+    "pomodoros_other": "{{count}} pomodoros completados hoy",
+    "cycle": "Sesión {{current}} de {{total}}"
+  },
+  "break": {
+    "heading": "Hora de respirar",
+    "subheading": "Estírate, bebe agua y aparta la vista de la pantalla."
+  },
+  "alarm": {
+    "heading": "¡Se acabó el tiempo!",
+    "stop": "Detener alarma"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "open": "Abrir ajustes",
+    "close": "Cerrar",
+    "done": "Listo",
+    "timers": "Temporizadores",
+    "workDuration": "Trabajo",
+    "shortDuration": "Descanso corto",
+    "longDuration": "Descanso largo",
+    "longEvery": "Descanso largo tras",
+    "minutes": "min",
+    "sessions": "sesiones",
+    "behavior": "Comportamiento",
+    "autoStartBreaks": "Iniciar descansos automáticamente",
+    "autoStartPomodoros": "Iniciar el siguiente pomodoro automáticamente",
+    "ticking": "Sonido de tic-tac al trabajar",
+    "sound": "Sonido",
+    "volume": "Volumen",
+    "alarmSound": "Sonido de alarma",
+    "uploadSound": "Sube el tuyo…",
+    "customSound": "Personalizado: {{name}}",
+    "preview": "Reproducir {{name}}",
+    "appearance": "Apariencia",
+    "language": "Idioma",
+    "theme": "Tema",
+    "themeLight": "Claro",
+    "themeDark": "Oscuro"
+  },
+  "sounds": {
+    "bell": "Campana",
+    "digital": "Digital",
+    "chime": "Carillón",
+    "gentle": "Suave",
+    "custom": "Personalizado"
+  },
+  "pip": {
+    "open": "Abrir miniventana",
+    "close": "Cerrar miniventana",
+    "unsupported": "La miniventana necesita un navegador Chromium (Chrome/Edge 116+)"
+  },
+  "fullscreen": {
+    "enter": "Pantalla completa",
+    "exit": "Salir de pantalla completa"
+  },
+  "notify": {
+    "breakTitle": "¡Hora de un descanso! 🍅",
+    "breakBody": "Buen trabajo: levántate y recarga energías.",
+    "workTitle": "¡De vuelta al trabajo! 🍅",
+    "workBody": "Se acabó el descanso. Concentrémonos juntos.",
+    "enableHint": "tomo te avisará cuando termine cada intervalo."
+  },
+  "theme": {
+    "toLight": "Cambiar a modo claro",
+    "toDark": "Cambiar a modo oscuro"
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "tagline": "专注小伙伴",
+  "mode": {
+    "group": "计时模式",
+    "work": "专注",
+    "short": "短休息",
+    "long": "长休息"
+  },
+  "controls": {
+    "start": "开始",
+    "pause": "暂停",
+    "resume": "继续",
+    "reset": "重置",
+    "skip": "跳过",
+    "startAria": "开始计时",
+    "pauseAria": "暂停计时",
+    "resumeAria": "继续计时",
+    "resetAria": "重置当前阶段",
+    "skipAria": "跳到下一阶段"
+  },
+  "progress": {
+    "today": "今天",
+    "pomodoros": "今天已完成 {{count}} 个番茄钟",
+    "cycle": "第 {{current}} / {{total}} 个"
+  },
+  "break": {
+    "heading": "歇一会儿吧",
+    "subheading": "伸个懒腰，喝口水，让眼睛离开屏幕。"
+  },
+  "alarm": {
+    "heading": "时间到！",
+    "stop": "停止闹铃"
+  },
+  "settings": {
+    "title": "设置",
+    "open": "打开设置",
+    "close": "关闭",
+    "done": "完成",
+    "timers": "计时",
+    "workDuration": "专注",
+    "shortDuration": "短休息",
+    "longDuration": "长休息",
+    "longEvery": "长休息间隔",
+    "minutes": "分钟",
+    "sessions": "次",
+    "behavior": "行为",
+    "autoStartBreaks": "自动开始休息",
+    "autoStartPomodoros": "自动开始下一个番茄钟",
+    "ticking": "专注时播放滴答声",
+    "sound": "声音",
+    "volume": "音量",
+    "alarmSound": "闹铃声",
+    "uploadSound": "上传你自己的声音…",
+    "customSound": "自定义：{{name}}",
+    "preview": "试听 {{name}}",
+    "appearance": "外观",
+    "language": "语言",
+    "theme": "主题",
+    "themeLight": "浅色",
+    "themeDark": "深色"
+  },
+  "sounds": {
+    "bell": "铃声",
+    "digital": "电子",
+    "chime": "风铃",
+    "gentle": "轻柔",
+    "custom": "自定义"
+  },
+  "pip": {
+    "open": "打开迷你窗口",
+    "close": "关闭迷你窗口",
+    "unsupported": "迷你窗口需要 Chromium 内核浏览器（Chrome/Edge 116 以上）"
+  },
+  "fullscreen": {
+    "enter": "全屏",
+    "exit": "退出全屏"
+  },
+  "notify": {
+    "breakTitle": "该休息了！🍅",
+    "breakBody": "干得不错——起身放松一下吧。",
+    "workTitle": "回来专注吧！🍅",
+    "workBody": "休息结束，一起加油。",
+    "enableHint": "每个阶段结束时 tomo 都会提醒你。"
+  },
+  "theme": {
+    "toLight": "切换到浅色模式",
+    "toDark": "切换到深色模式"
+  }
+}

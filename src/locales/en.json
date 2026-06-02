@@ -1,0 +1,90 @@
+{
+  "tagline": "focus friend",
+  "mode": {
+    "group": "Timer mode",
+    "work": "Work",
+    "short": "Short Break",
+    "long": "Long Break"
+  },
+  "controls": {
+    "start": "Start",
+    "pause": "Pause",
+    "resume": "Resume",
+    "reset": "Reset",
+    "skip": "Skip",
+    "startAria": "Start timer",
+    "pauseAria": "Pause timer",
+    "resumeAria": "Resume timer",
+    "resetAria": "Reset current interval",
+    "skipAria": "Skip to next interval"
+  },
+  "progress": {
+    "today": "Today",
+    "pomodoros": "{{count}} pomodoro completed today",
+    "pomodoros_other": "{{count}} pomodoros completed today",
+    "cycle": "Session {{current}} of {{total}}"
+  },
+  "break": {
+    "heading": "Time to breathe",
+    "subheading": "Stretch, sip some water, look away from the screen."
+  },
+  "alarm": {
+    "heading": "Time's up!",
+    "stop": "Stop alarm"
+  },
+  "settings": {
+    "title": "Settings",
+    "open": "Open settings",
+    "close": "Close",
+    "done": "Done",
+    "timers": "Timers",
+    "workDuration": "Work",
+    "shortDuration": "Short break",
+    "longDuration": "Long break",
+    "longEvery": "Long break after",
+    "minutes": "min",
+    "sessions": "sessions",
+    "behavior": "Behavior",
+    "autoStartBreaks": "Auto-start breaks",
+    "autoStartPomodoros": "Auto-start next pomodoro",
+    "ticking": "Ticking sound while working",
+    "sound": "Sound",
+    "volume": "Volume",
+    "alarmSound": "Alarm sound",
+    "uploadSound": "Upload your own…",
+    "customSound": "Custom: {{name}}",
+    "preview": "Preview {{name}}",
+    "appearance": "Appearance",
+    "language": "Language",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark"
+  },
+  "sounds": {
+    "bell": "Bell",
+    "digital": "Digital",
+    "chime": "Chime",
+    "gentle": "Gentle",
+    "custom": "Custom"
+  },
+  "pip": {
+    "open": "Open mini window",
+    "close": "Close mini window",
+    "unsupported": "Mini window needs a Chromium browser (Chrome/Edge 116+)"
+  },
+  "fullscreen": {
+    "enter": "Fullscreen",
+    "exit": "Exit fullscreen"
+  },
+  "notify": {
+    "breakTitle": "Time for a break! 🍅",
+    "breakBody": "Nice work — step away and recharge.",
+    "workTitle": "Back to work! 🍅",
+    "workBody": "Break's over. Let's focus together.",
+    "enableHint": "tomo will let you know when each interval ends."
+  },
+  "theme": {
+    "toLight": "Switch to light mode",
+    "toDark": "Switch to dark mode"
+  }
+}

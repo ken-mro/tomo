@@ -1,0 +1,89 @@
+{
+  "tagline": "集中のおとも",
+  "mode": {
+    "group": "タイマーモード",
+    "work": "作業",
+    "short": "小休憩",
+    "long": "長休憩"
+  },
+  "controls": {
+    "start": "スタート",
+    "pause": "一時停止",
+    "resume": "再開",
+    "reset": "リセット",
+    "skip": "スキップ",
+    "startAria": "タイマーを開始",
+    "pauseAria": "タイマーを一時停止",
+    "resumeAria": "タイマーを再開",
+    "resetAria": "現在の区切りをリセット",
+    "skipAria": "次の区切りへスキップ"
+  },
+  "progress": {
+    "today": "今日",
+    "pomodoros": "今日 {{count}} ポモドーロ完了",
+    "cycle": "セッション {{current}} / {{total}}"
+  },
+  "break": {
+    "heading": "ひと息つきましょう",
+    "subheading": "伸びをして、水を飲んで、画面から目を離して。"
+  },
+  "alarm": {
+    "heading": "時間です！",
+    "stop": "アラームを止める"
+  },
+  "settings": {
+    "title": "設定",
+    "open": "設定を開く",
+    "close": "閉じる",
+    "done": "完了",
+    "timers": "タイマー",
+    "workDuration": "作業",
+    "shortDuration": "小休憩",
+    "longDuration": "長休憩",
+    "longEvery": "長休憩までの回数",
+    "minutes": "分",
+    "sessions": "回",
+    "behavior": "動作",
+    "autoStartBreaks": "休憩を自動で開始",
+    "autoStartPomodoros": "次のポモドーロを自動で開始",
+    "ticking": "作業中にチクタク音を鳴らす",
+    "sound": "サウンド",
+    "volume": "音量",
+    "alarmSound": "アラーム音",
+    "uploadSound": "自分の音をアップロード…",
+    "customSound": "カスタム: {{name}}",
+    "preview": "{{name}} を再生",
+    "appearance": "外観",
+    "language": "言語",
+    "theme": "テーマ",
+    "themeLight": "ライト",
+    "themeDark": "ダーク"
+  },
+  "sounds": {
+    "bell": "ベル",
+    "digital": "デジタル",
+    "chime": "チャイム",
+    "gentle": "やさしい",
+    "custom": "カスタム"
+  },
+  "pip": {
+    "open": "ミニウィンドウを開く",
+    "close": "ミニウィンドウを閉じる",
+    "unsupported": "ミニウィンドウには Chromium 系ブラウザが必要です（Chrome/Edge 116 以降）"
+  },
+  "fullscreen": {
+    "enter": "全画面",
+    "exit": "全画面を終了"
+  },
+  "notify": {
+    "breakTitle": "休憩の時間です！🍅",
+    "breakBody": "おつかれさま。少し離れてリフレッシュしましょう。",
+    "workTitle": "作業に戻りましょう！🍅",
+    "workBody": "休憩はおしまい。一緒に集中しましょう。",
+    "enableHint": "各区切りの終わりに tomo がお知らせします。"
+  },
+  "theme": {
+    "toLight": "ライトモードに切り替え",
+    "toDark": "ダークモードに切り替え"
+  }
+}
