@@ -773,25 +773,38 @@ input[type='range'] {
     max-width: 820px;
   }
   .timer-card {
-    max-width: 820px;
+    max-width: 760px;
     margin: 0 auto;
     display: grid;
+    /* Two sections: the timer ring on the left, everything else stacked on
+       the right (tabs, break message, progress + count, controls). */
     grid-template-columns: auto 1fr;
     grid-template-areas:
-      'tabs tabs'
-      'banner banner'
+      'stage tabs'
+      'stage banner'
       'stage side';
     align-items: center;
-    column-gap: 28px;
-    row-gap: 8px;
-    padding: 12px 24px 14px;
+    justify-items: center;
+    column-gap: clamp(14px, 4vw, 30px);
+    row-gap: 10px;
+    padding: 12px clamp(14px, 4vw, 26px);
+  }
+  /* Work mode has no break banner — drop that row so the ring stays centred
+     against the right column. */
+  .mode-work .timer-card {
+    grid-template-areas:
+      'stage tabs'
+      'stage side';
+  }
+  .timer-stage {
+    grid-area: stage;
   }
   .mode-tabs {
     grid-area: tabs;
-    justify-self: center;
   }
   .break-banner {
     grid-area: banner;
+    width: 100%;
     padding: 6px 12px;
     gap: 10px;
   }
@@ -802,12 +815,9 @@ input[type='range'] {
   .break-banner__heading {
     font-size: 13px;
   }
-  /* The subheading is dropped in the compact layout to save vertical space. */
+  /* The subheading is dropped in the compact layout to save horizontal space. */
   .break-banner__sub {
     display: none;
-  }
-  .timer-stage {
-    grid-area: stage;
   }
   .timer-side {
     grid-area: side;
@@ -816,7 +826,7 @@ input[type='range'] {
   /* Scale the ring to the viewport height so it never forces the card taller
      than the screen; clamp keeps it readable on the shortest phones. */
   .timer-ring {
-    --ring-size: clamp(120px, 38vh, 160px);
+    --ring-size: clamp(116px, 36vh, 156px);
   }
   /* Derive the time from the ring size so it stays well-proportioned (never
      cramped against the stroke) at every clamped ring size. */
@@ -828,6 +838,11 @@ input[type='range'] {
      inside the compact ring without overflowing, and the time centers nicely. */
   .timer-ring__mode {
     display: none;
+  }
+  /* Keep the tabs from overflowing the right column on narrow landscape. */
+  .mode-tab {
+    padding: 7px 12px;
+    font-size: 12px;
   }
   .today-count {
     margin-top: 0;
