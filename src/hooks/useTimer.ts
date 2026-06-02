@@ -132,7 +132,10 @@ export function useTimer(settings: Settings, onIntervalEnd: (e: IntervalEnd) => 
   // running so a live countdown can't be edited out from under itself.
   const adjustRemaining = useCallback((ms: number) => {
     if (runningRef.current) return
-    setRemaining(Math.max(MIN_REMAINING_MS, Math.min(MAX_REMAINING_MS, ms)))
+    // Snap to whole minutes so the result is minute-aligned even when the drag
+    // started from a time with leftover seconds (e.g. 24:59).
+    const snapped = Math.round(ms / 60_000) * 60_000
+    setRemaining(Math.max(MIN_REMAINING_MS, Math.min(MAX_REMAINING_MS, snapped)))
   }, [])
 
   const toggle = useCallback(() => {

@@ -45,8 +45,15 @@ export function useRingDial(enabled: boolean, baseMs: number, onChange: (ms: num
       onChange(d.base + minutes * 60_000)
     },
     onPointerUp: (e) => {
+      // Only release if a drag was actually in progress — releasing a pointer
+      // that was never captured (e.g. pointerdown returned early) throws.
+      if (!drag.current) return
       drag.current = null
-      ;(e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId)
+      try {
+        ;(e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId)
+      } catch {
+        /* pointer wasn't captured — nothing to release */
+      }
     },
   }
 }
