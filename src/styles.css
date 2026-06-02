@@ -792,18 +792,19 @@ input[type='range'] {
   }
   .break-banner {
     grid-area: banner;
-    padding: 8px 12px;
+    padding: 6px 12px;
     gap: 10px;
   }
   .break-banner__mascot {
-    width: 40px;
-    height: 40px;
+    width: 34px;
+    height: 34px;
   }
   .break-banner__heading {
-    font-size: 14px;
+    font-size: 13px;
   }
+  /* The subheading is dropped in the compact layout to save vertical space. */
   .break-banner__sub {
-    font-size: 12px;
+    display: none;
   }
   .timer-stage {
     grid-area: stage;
@@ -815,13 +816,18 @@ input[type='range'] {
   /* Scale the ring to the viewport height so it never forces the card taller
      than the screen; clamp keeps it readable on the shortest phones. */
   .timer-ring {
-    --ring-size: clamp(104px, 30vh, 150px);
+    --ring-size: clamp(120px, 38vh, 160px);
   }
+  /* Derive the time from the ring size so it stays well-proportioned (never
+     cramped against the stroke) at every clamped ring size. */
   .timer-ring__time {
-    font-size: clamp(30px, 9vh, 40px);
+    font-size: calc(var(--ring-size) * 0.28);
   }
+  /* The mode is already shown by the active tab (and the break banner), so the
+     in-ring label is hidden here — it can't fit a long label like "LONG BREAK"
+     inside the compact ring without overflowing, and the time centers nicely. */
   .timer-ring__mode {
-    font-size: 11px;
+    display: none;
   }
   .today-count {
     margin-top: 0;
