@@ -395,6 +395,14 @@ button,
 .today-count__clear:active {
   transform: scale(0.92);
 }
+.today-count__clear:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.today-count__clear:disabled:hover {
+  background: transparent;
+  color: var(--text-soft);
+}
 
 /* ----- controls ------------------------------------------------------------- */
 .controls {
@@ -788,13 +796,6 @@ input[type='range'] {
     column-gap: clamp(14px, 4vw, 30px);
     row-gap: 10px;
     padding: 12px clamp(14px, 4vw, 26px);
-  }
-  /* Work mode has no break banner — drop that row so the ring stays centred
-     against the right column. */
-  .mode-work .timer-card {
-    grid-template-areas:
-      'stage tabs'
-      'stage side';
   }
   .timer-stage {
     grid-area: stage;

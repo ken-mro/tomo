@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Settings } from '../types'
 import { CUSTOM_SOUND_ID } from '../types'
@@ -33,18 +33,37 @@ function NumberField({
   max: number
   onChange: (n: number) => void
 }) {
+  // Keep a local text value so the field can be emptied and freely edited
+  // (e.g. replacing a single digit) instead of being clamped on every keystroke.
+  // The clamped numeric value is committed on blur / Enter.
+  const [text, setText] = useState(String(value))
+  useEffect(() => setText(String(value)), [value])
+
+  const commit = () => {
+    const n = Math.round(Number(text))
+    if (text.trim() === '' || Number.isNaN(n)) {
+      setText(String(value)) // revert empty / invalid input
+      return
+    }
+    const clamped = Math.max(min, Math.min(max, n))
+    setText(String(clamped))
+    onChange(clamped)
+  }
+
   return (
     <label className="field field--number">
       <span className="field__label">{label}</span>
       <span className="field__control">
         <input
           type="number"
+          inputMode="numeric"
           min={min}
           max={max}
-          value={value}
-          onChange={(e) => {
-            const n = Number(e.target.value)
-            if (!Number.isNaN(n)) onChange(Math.max(min, Math.min(max, n)))
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onBlur={commit}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') e.currentTarget.blur()
           }}
         />
         <span className="field__unit">{unit}</span>

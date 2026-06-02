@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 
 import { Header } from './components/Header'
-import { ModeTabs } from './components/ModeTabs'
+import { ModeTabs, MODE_ORDER } from './components/ModeTabs'
 import { TimerRing } from './components/TimerRing'
 import { ProgressDots } from './components/ProgressDots'
 import { Controls } from './components/Controls'
@@ -14,6 +14,7 @@ import { PipTimer } from './components/PipTimer'
 import { useTimer, type IntervalEnd } from './hooks/useTimer'
 import { useTheme } from './hooks/useTheme'
 import { usePip } from './hooks/usePip'
+import { useSwipeNav } from './hooks/useSwipeNav'
 
 import type { Settings } from './types'
 import { loadSettings, saveSettings, DEFAULT_SETTINGS } from './lib/storage'
@@ -209,6 +210,17 @@ export default function App() {
       })
   }, [])
 
+  // Step through the tabs by one position (clamped), reused by swipe gestures.
+  const stepMode = useCallback(
+    (dir: -1 | 1) => {
+      const i = MODE_ORDER.indexOf(timer.mode)
+      const next = MODE_ORDER[Math.min(MODE_ORDER.length - 1, Math.max(0, i + dir))]
+      if (next !== timer.mode) timer.selectMode(next)
+    },
+    [timer],
+  )
+  const swipe = useSwipeNav(() => stepMode(-1), () => stepMode(1))
+
   const isBreak = timer.mode !== 'work'
   const appClass = useMemo(
     () => `app mode-${timer.mode}${timer.alarmRinging ? ' is-alarm' : ''}`,
@@ -229,18 +241,22 @@ export default function App() {
         onOpenSettings={() => setSettingsOpen(true)}
       />
 
-      <main className="timer-card">
+      <main className="timer-card" {...swipe}>
         <ModeTabs mode={timer.mode} onSelect={timer.selectMode} />
 
-        {(isBreak || timer.alarmRinging) && (
-          <div className="break-banner">
-            <Mascot size={56} className="break-banner__mascot" decorative />
-            <div>
-              <p className="break-banner__heading">{timer.alarmRinging ? t('alarm.heading') : t('break.heading')}</p>
-              {!timer.alarmRinging && <p className="break-banner__sub">{t('break.subheading')}</p>}
-            </div>
+        {/* The banner is always rendered (with a focus message during work) so
+            the layout — ring, controls — keeps a stable position across tabs. */}
+        <div className="break-banner">
+          <Mascot size={56} className="break-banner__mascot" decorative />
+          <div>
+            <p className="break-banner__heading">
+              {timer.alarmRinging ? t('alarm.heading') : isBreak ? t('break.heading') : t('focus.heading')}
+            </p>
+            {!timer.alarmRinging && (
+              <p className="break-banner__sub">{isBreak ? t('break.subheading') : t('focus.subheading')}</p>
+            )}
           </div>
-        )}
+        </div>
 
         <div className="timer-stage">
           <TimerRing
@@ -255,20 +271,19 @@ export default function App() {
           <ProgressDots count={timer.cycleCount} total={timer.longEvery} />
           <div className="today-count">
             <span>{t('progress.today')} · {t('progress.pomodoros', { count: timer.todayCount })}</span>
-            {timer.todayCount > 0 && (
-              <button
-                type="button"
-                className="today-count__clear"
-                onClick={timer.clearToday}
-                aria-label={t('progress.clearToday')}
-                title={t('progress.clearToday')}
-              >
-                <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M3 12a9 9 0 1 0 3-6.7L3 8" />
-                  <path d="M3 3v5h5" />
-                </svg>
-              </button>
-            )}
+            <button
+              type="button"
+              className="today-count__clear"
+              onClick={timer.clearToday}
+              disabled={timer.todayCount === 0}
+              aria-label={t('progress.clearToday')}
+              title={t('progress.clearToday')}
+            >
+              <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M3 12a9 9 0 1 0 3-6.7L3 8" />
+                <path d="M3 3v5h5" />
+              </svg>
+            </button>
           </div>
 
           <Controls running={timer.running} started={started} onToggle={handleToggle} onReset={timer.reset} onSkip={timer.skip} />

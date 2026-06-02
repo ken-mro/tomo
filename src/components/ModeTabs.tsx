@@ -3,6 +3,9 @@ import type { Mode } from '../types'
 
 const MODES: Mode[] = ['work', 'short', 'long']
 
+/** Tab order, exported so swipe navigation can step through the same sequence. */
+export const MODE_ORDER = MODES
+
 interface ModeTabsProps {
   mode: Mode
   onSelect: (m: Mode) => void

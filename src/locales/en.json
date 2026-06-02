@@ -29,6 +29,10 @@
     "heading": "Time to breathe",
     "subheading": "Stretch, sip some water, look away from the screen."
   },
+  "focus": {
+    "heading": "Time to focus",
+    "subheading": "Settle in — tomo's right here with you."
+  },
   "alarm": {
     "heading": "Time's up!",
     "stop": "Stop alarm"
