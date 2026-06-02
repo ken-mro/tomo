@@ -29,9 +29,14 @@ export interface TimerApi {
   stopAlarm: () => void
   /** Reset today's completed-pomodoro count to zero. */
   clearToday: () => void
+  /** While paused/stopped, set the current interval's remaining time (ms). */
+  adjustRemaining: (ms: number) => void
 }
 
 const minToMs = (min: number) => Math.max(1, Math.round(min)) * 60_000
+// Bounds for manual time adjustment (drag on the ring while paused).
+const MIN_REMAINING_MS = 60_000
+const MAX_REMAINING_MS = 180 * 60_000
 
 export function useTimer(settings: Settings, onIntervalEnd: (e: IntervalEnd) => void): TimerApi {
   const durationFor = useCallback(
@@ -60,6 +65,10 @@ export function useTimer(settings: Settings, onIntervalEnd: (e: IntervalEnd) => 
   // re-subscribing the interval on every render.
   const ref = useRef({ mode, cycleCount, settings, durationFor, onIntervalEnd })
   ref.current = { mode, cycleCount, settings, durationFor, onIntervalEnd }
+
+  // Latest running flag for effects/callbacks that must not re-run when it flips.
+  const runningRef = useRef(running)
+  runningRef.current = running
 
   const handleComplete = useCallback(() => {
     const { mode: from, cycleCount: cycle, settings: s, durationFor: dur, onIntervalEnd: notify } = ref.current
@@ -119,6 +128,13 @@ export function useTimer(settings: Settings, onIntervalEnd: (e: IntervalEnd) => 
     setCycleCount(0)
   }, [])
 
+  // Manually set the remaining time (used by drag-to-adjust). Ignored while
+  // running so a live countdown can't be edited out from under itself.
+  const adjustRemaining = useCallback((ms: number) => {
+    if (runningRef.current) return
+    setRemaining(Math.max(MIN_REMAINING_MS, Math.min(MAX_REMAINING_MS, ms)))
+  }, [])
+
   const toggle = useCallback(() => {
     setAlarmRinging(false)
     if (running) {
@@ -163,10 +179,12 @@ export function useTimer(settings: Settings, onIntervalEnd: (e: IntervalEnd) => 
     [durationFor],
   )
 
-  // If durations change in settings while paused, reflect the new length.
+  // If durations change in settings (or the mode changes) while not running,
+  // reflect the new length. `running` is read via a ref and kept out of the
+  // deps so that *pausing* (running → false) doesn't reset the snapshot time.
   useEffect(() => {
-    if (!running) setRemaining(durationFor(mode))
-  }, [durationFor, mode, running])
+    if (!runningRef.current) setRemaining(durationFor(mode))
+  }, [durationFor, mode])
 
   return {
     mode,
@@ -183,5 +201,6 @@ export function useTimer(settings: Settings, onIntervalEnd: (e: IntervalEnd) => 
     selectMode,
     stopAlarm: clearAlarm,
     clearToday,
+    adjustRemaining,
   }
 }

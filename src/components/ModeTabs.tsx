@@ -10,10 +10,12 @@ export const MODE_ORDER = ['work', 'short', 'long'] as const satisfies readonly 
 interface ModeTabsProps {
   mode: Mode
   onSelect: (m: Mode) => void
+  /** Disable switching (e.g. while the timer is running). */
+  disabled?: boolean
 }
 
-/** Tabs for switching between Work / Short Break / Long Break at any time. */
-export function ModeTabs({ mode, onSelect }: ModeTabsProps) {
+/** Tabs for switching between Work / Short Break / Long Break. */
+export function ModeTabs({ mode, onSelect, disabled = false }: ModeTabsProps) {
   const { t } = useTranslation()
   return (
     <div className="mode-tabs" role="tablist" aria-label={t('mode.group')}>
@@ -22,6 +24,8 @@ export function ModeTabs({ mode, onSelect }: ModeTabsProps) {
           key={m}
           role="tab"
           aria-selected={mode === m}
+          // The active tab stays enabled; the others are locked while running.
+          disabled={disabled && mode !== m}
           className={`mode-tab${mode === m ? ' is-active' : ''}`}
           onClick={() => onSelect(m)}
         >

@@ -262,6 +262,11 @@ button,
   color: #fff;
   box-shadow: var(--shadow-sm);
 }
+/* Inactive tabs are locked while the timer is running. */
+.mode-tab:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
 
 /* ----- break banner --------------------------------------------------------- */
 .break-banner {
@@ -293,6 +298,12 @@ button,
 .timer-stage {
   display: grid;
   place-items: center;
+}
+/* While paused, the ring is draggable to adjust the time. touch-action:none so
+   a vertical drag adjusts instead of scrolling the page. */
+.timer-stage.is-adjustable {
+  cursor: ns-resize;
+  touch-action: none;
 }
 .timer-side {
   display: flex;
