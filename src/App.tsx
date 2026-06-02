@@ -16,11 +16,11 @@ import { useTheme } from './hooks/useTheme'
 import { usePip } from './hooks/usePip'
 
 import type { Settings } from './types'
-import { loadSettings, saveSettings } from './lib/storage'
+import { loadSettings, saveSettings, DEFAULT_SETTINGS } from './lib/storage'
 import { formatTime } from './lib/format'
 import { playAlarm, startTicking, stopTicking } from './lib/sounds'
 import { ensureNotificationPermission, showTimesUpNotification } from './lib/notifications'
-import { saveCustomSound, loadCustomSound } from './lib/idb'
+import { saveCustomSound, loadCustomSound, clearCustomSound } from './lib/idb'
 import { CUSTOM_SOUND_ID } from './types'
 
 const ICON_URL = new URL('tomo.svg', document.baseURI).href
@@ -195,6 +195,14 @@ export default function App() {
     [updateSettings],
   )
 
+  const handleDeleteSound = useCallback(() => {
+    void clearCustomSound().then(() => {
+      setCustomSoundName(null)
+      // If the (now removed) custom sound was selected, fall back to a built-in.
+      setSettings((s) => (s.sound === CUSTOM_SOUND_ID ? { ...s, sound: DEFAULT_SETTINGS.sound } : s))
+    })
+  }, [])
+
   const isBreak = timer.mode !== 'work'
   const appClass = useMemo(
     () => `app mode-${timer.mode}${timer.alarmRinging ? ' is-alarm' : ''}`,
@@ -239,9 +247,23 @@ export default function App() {
 
         <div className="timer-side">
           <ProgressDots count={timer.cycleCount} total={timer.longEvery} />
-          <p className="today-count">
-            {t('progress.today')} · {t('progress.pomodoros', { count: timer.todayCount })}
-          </p>
+          <div className="today-count">
+            <span>{t('progress.today')} · {t('progress.pomodoros', { count: timer.todayCount })}</span>
+            {timer.todayCount > 0 && (
+              <button
+                type="button"
+                className="today-count__clear"
+                onClick={timer.clearToday}
+                aria-label={t('progress.clearToday')}
+                title={t('progress.clearToday')}
+              >
+                <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M3 12a9 9 0 1 0 3-6.7L3 8" />
+                  <path d="M3 3v5h5" />
+                </svg>
+              </button>
+            )}
+          </div>
 
           <Controls running={timer.running} started={started} onToggle={handleToggle} onReset={timer.reset} onSkip={timer.skip} />
 
@@ -262,6 +284,7 @@ export default function App() {
         onSetTheme={setTheme}
         customSoundName={customSoundName}
         onUploadSound={handleUploadSound}
+        onDeleteSound={handleDeleteSound}
       />
 
       {/* The PiP window shares this React tree, so its state stays in sync both

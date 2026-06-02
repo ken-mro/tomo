@@ -22,7 +22,8 @@
     "today": "Hoy",
     "pomodoros": "{{count}} pomodoro completado hoy",
     "pomodoros_other": "{{count}} pomodoros completados hoy",
-    "cycle": "Sesión {{current}} de {{total}}"
+    "cycle": "Sesión {{current}} de {{total}}",
+    "clearToday": "Reiniciar el conteo de hoy"
   },
   "break": {
     "heading": "Hora de respirar",
@@ -52,6 +53,7 @@
     "volume": "Volumen",
     "alarmSound": "Sonido de alarma",
     "uploadSound": "Sube el tuyo…",
+    "deleteSound": "Eliminar sonido subido",
     "customSound": "Personalizado: {{name}}",
     "preview": "Reproducir {{name}}",
     "appearance": "Apariencia",

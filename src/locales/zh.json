@@ -21,7 +21,8 @@
   "progress": {
     "today": "今天",
     "pomodoros": "今天已完成 {{count}} 个番茄钟",
-    "cycle": "第 {{current}} / {{total}} 个"
+    "cycle": "第 {{current}} / {{total}} 个",
+    "clearToday": "重置今日计数"
   },
   "break": {
     "heading": "歇一会儿吧",
@@ -51,6 +52,7 @@
     "volume": "音量",
     "alarmSound": "闹铃声",
     "uploadSound": "上传你自己的声音…",
+    "deleteSound": "删除已上传的声音",
     "customSound": "自定义：{{name}}",
     "preview": "试听 {{name}}",
     "appearance": "外观",
