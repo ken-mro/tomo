@@ -15,6 +15,7 @@ interface SettingsPanelProps {
   onSetTheme: (t: ThemeChoice) => void
   customSoundName: string | null
   onUploadSound: (file: File) => void
+  onDeleteSound: () => void
 }
 
 function NumberField({
@@ -80,6 +81,7 @@ export function SettingsPanel({
   onSetTheme,
   customSoundName,
   onUploadSound,
+  onDeleteSound,
 }: SettingsPanelProps) {
   const { t, i18n } = useTranslation()
   const fileRef = useRef<HTMLInputElement>(null)
@@ -147,16 +149,31 @@ export function SettingsPanel({
                     />
                     <span>{s.name}</span>
                   </label>
-                  <button
-                    type="button"
-                    className="btn btn--ghost btn--icon btn--sm"
-                    aria-label={t('settings.preview', { name: s.name })}
-                    onClick={() => void playAlarm(s.id, settings.volume)}
-                  >
-                    <svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </button>
+                  <div className="sound-row__actions">
+                    <button
+                      type="button"
+                      className="btn btn--ghost btn--icon btn--sm"
+                      aria-label={t('settings.preview', { name: s.name })}
+                      onClick={() => void playAlarm(s.id, settings.volume)}
+                    >
+                      <svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </button>
+                    {s.id === CUSTOM_SOUND_ID && (
+                      <button
+                        type="button"
+                        className="btn btn--ghost btn--icon btn--sm"
+                        aria-label={t('settings.deleteSound')}
+                        title={t('settings.deleteSound')}
+                        onClick={onDeleteSound}
+                      >
+                        <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>

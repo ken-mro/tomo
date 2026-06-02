@@ -368,6 +368,32 @@ button,
   font-size: 13px;
   color: var(--text-soft);
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.today-count__clear {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-soft);
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+.today-count__clear:hover {
+  background: var(--track);
+  color: var(--text);
+}
+.today-count__clear:active {
+  transform: scale(0.92);
 }
 
 /* ----- controls ------------------------------------------------------------- */
@@ -615,6 +641,12 @@ input[type='range'] {
   width: 18px;
   height: 18px;
 }
+.sound-row__actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: none;
+}
 
 /* ----- Picture-in-Picture window -------------------------------------------- */
 .pip-body {
@@ -724,18 +756,24 @@ input[type='range'] {
   }
 }
 
-/* ----- landscape phones: compact two-column layout so nothing scrolls off ---- */
+/* ----- landscape phones: compact two-column layout so nothing scrolls off ----
+   The whole app is locked to the viewport height and centred, so the card
+   always fits without any vertical scroll. The ring scales with the available
+   height (vh) so it shrinks on very short screens instead of overflowing. */
 @media (orientation: landscape) and (max-height: 560px) {
   .app {
-    justify-content: flex-start;
-    padding: 12px 16px;
-    gap: 10px;
+    height: 100dvh;
+    min-height: 0;
+    justify-content: center;
+    overflow: hidden;
+    padding: 8px 16px;
+    gap: 8px;
   }
   .app-header {
-    max-width: 780px;
+    max-width: 820px;
   }
   .timer-card {
-    max-width: 780px;
+    max-width: 820px;
     margin: 0 auto;
     display: grid;
     grid-template-columns: auto 1fr;
@@ -744,9 +782,9 @@ input[type='range'] {
       'banner banner'
       'stage side';
     align-items: center;
-    column-gap: 32px;
-    row-gap: 12px;
-    padding: 16px 26px 20px;
+    column-gap: 28px;
+    row-gap: 8px;
+    padding: 12px 24px 14px;
   }
   .mode-tabs {
     grid-area: tabs;
@@ -754,21 +792,41 @@ input[type='range'] {
   }
   .break-banner {
     grid-area: banner;
+    padding: 8px 12px;
+    gap: 10px;
+  }
+  .break-banner__mascot {
+    width: 40px;
+    height: 40px;
+  }
+  .break-banner__heading {
+    font-size: 14px;
+  }
+  .break-banner__sub {
+    font-size: 12px;
   }
   .timer-stage {
     grid-area: stage;
   }
   .timer-side {
     grid-area: side;
-    gap: 12px;
+    gap: 10px;
   }
+  /* Scale the ring to the viewport height so it never forces the card taller
+     than the screen; clamp keeps it readable on the shortest phones. */
   .timer-ring {
-    --ring-size: 150px;
+    --ring-size: clamp(104px, 30vh, 150px);
   }
   .timer-ring__time {
-    font-size: 40px;
+    font-size: clamp(30px, 9vh, 40px);
   }
   .timer-ring__mode {
     font-size: 11px;
+  }
+  .today-count {
+    margin-top: 0;
+  }
+  .stop-alarm {
+    margin-top: 0;
   }
 }
