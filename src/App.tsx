@@ -196,11 +196,17 @@ export default function App() {
   )
 
   const handleDeleteSound = useCallback(() => {
-    void clearCustomSound().then(() => {
-      setCustomSoundName(null)
-      // If the (now removed) custom sound was selected, fall back to a built-in.
-      setSettings((s) => (s.sound === CUSTOM_SOUND_ID ? { ...s, sound: DEFAULT_SETTINGS.sound } : s))
-    })
+    clearCustomSound()
+      .then(() => {
+        setCustomSoundName(null)
+        // If the (now removed) custom sound was selected, fall back to a built-in.
+        setSettings((s) => (s.sound === CUSTOM_SOUND_ID ? { ...s, sound: DEFAULT_SETTINGS.sound } : s))
+      })
+      .catch((err) => {
+        // Deletion failed (e.g. IndexedDB unavailable) — keep the existing UI
+        // state rather than claiming the sound was removed.
+        console.error('Failed to delete custom sound', err)
+      })
   }, [])
 
   const isBreak = timer.mode !== 'work'

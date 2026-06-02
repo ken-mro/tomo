@@ -22,7 +22,7 @@ async function loadChromium() {
   }
 }
 
-const URL = process.env.URL || 'http://localhost:4173/';
+const previewUrl = process.env.URL || 'http://localhost:4173/';
 const chromium = await loadChromium();
 const browser = await chromium.launch();
 
@@ -33,7 +33,7 @@ async function shot(theme, file) {
     colorScheme: theme === 'dark' ? 'dark' : 'light',
   });
   const page = await ctx.newPage();
-  await page.goto(URL, { waitUntil: 'networkidle' });
+  await page.goto(previewUrl, { waitUntil: 'networkidle' });
   // Force the explicit theme so it doesn't depend solely on the OS hint.
   await page.evaluate((t) => {
     document.documentElement.setAttribute('data-theme', t);
