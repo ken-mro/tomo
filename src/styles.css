@@ -395,14 +395,6 @@ button,
 .today-count__clear:active {
   transform: scale(0.92);
 }
-.today-count__clear:disabled {
-  opacity: 0.35;
-  cursor: default;
-}
-.today-count__clear:disabled:hover {
-  background: transparent;
-  color: var(--text-soft);
-}
 
 /* ----- controls ------------------------------------------------------------- */
 .controls {
