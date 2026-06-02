@@ -1,10 +1,11 @@
 import { useTranslation } from 'react-i18next'
 import type { Mode } from '../types'
 
-const MODES: Mode[] = ['work', 'short', 'long']
-
-/** Tab order, exported so swipe navigation can step through the same sequence. */
-export const MODE_ORDER = MODES
+/**
+ * Tab order, exported so swipe navigation steps through the same sequence.
+ * Readonly so it can't be mutated (which would also reorder the tabs here).
+ */
+export const MODE_ORDER = ['work', 'short', 'long'] as const satisfies readonly Mode[]
 
 interface ModeTabsProps {
   mode: Mode
@@ -16,7 +17,7 @@ export function ModeTabs({ mode, onSelect }: ModeTabsProps) {
   const { t } = useTranslation()
   return (
     <div className="mode-tabs" role="tablist" aria-label={t('mode.group')}>
-      {MODES.map((m) => (
+      {MODE_ORDER.map((m) => (
         <button
           key={m}
           role="tab"
