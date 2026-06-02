@@ -17,7 +17,7 @@
     "resumeAria": "继续计时",
     "resetAria": "重置当前阶段",
     "skipAria": "跳到下一阶段",
-    "adjustHint": "上下拖动以调整时间"
+    "adjustHint": "沿着圆圈拖动以调整时间"
   },
   "progress": {
     "today": "今天",

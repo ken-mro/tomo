@@ -17,7 +17,7 @@
     "resumeAria": "Reanudar temporizador",
     "resetAria": "Reiniciar el intervalo actual",
     "skipAria": "Saltar al siguiente intervalo",
-    "adjustHint": "Arrastra arriba o abajo para ajustar el tiempo"
+    "adjustHint": "Arrastra alrededor del círculo para ajustar el tiempo"
   },
   "progress": {
     "today": "Hoy",

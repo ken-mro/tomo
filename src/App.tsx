@@ -14,7 +14,7 @@ import { PipTimer } from './components/PipTimer'
 import { useTimer, type IntervalEnd } from './hooks/useTimer'
 import { useTheme } from './hooks/useTheme'
 import { usePip } from './hooks/usePip'
-import { useTimeDrag } from './hooks/useTimeDrag'
+import { useRingDial } from './hooks/useRingDial'
 
 import type { Settings } from './types'
 import { loadSettings, saveSettings, DEFAULT_SETTINGS } from './lib/storage'
@@ -210,9 +210,9 @@ export default function App() {
       })
   }, [])
 
-  // Drag vertically on the ring to adjust the time while the timer is paused.
+  // Drag around the ring like a dial to adjust the time while paused.
   const canAdjust = !timer.running && !timer.alarmRinging
-  const timeDrag = useTimeDrag(canAdjust, timer.remainingMs, timer.adjustRemaining)
+  const dial = useRingDial(canAdjust, timer.remainingMs, timer.adjustRemaining)
 
   const isBreak = timer.mode !== 'work'
   const appClass = useMemo(
@@ -235,7 +235,7 @@ export default function App() {
       />
 
       <main className="timer-card">
-        <ModeTabs mode={timer.mode} onSelect={timer.selectMode} disabled={timer.running} />
+        <ModeTabs mode={timer.mode} onSelect={timer.selectMode} />
 
         {/* The banner is always rendered (with a focus message during work) so
             the layout — ring, controls — keeps a stable position across tabs. */}
@@ -254,7 +254,7 @@ export default function App() {
         <div
           className={`timer-stage${canAdjust ? ' is-adjustable' : ''}`}
           title={canAdjust ? t('controls.adjustHint') : undefined}
-          {...timeDrag}
+          {...dial}
         >
           <TimerRing
             mode={timer.mode}
