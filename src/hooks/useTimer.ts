@@ -27,6 +27,8 @@ export interface TimerApi {
   skip: () => void
   selectMode: (m: Mode) => void
   stopAlarm: () => void
+  /** Reset today's completed-pomodoro count to zero. */
+  clearToday: () => void
 }
 
 const minToMs = (min: number) => Math.max(1, Math.round(min)) * 60_000
@@ -110,6 +112,9 @@ export function useTimer(settings: Settings, onIntervalEnd: (e: IntervalEnd) => 
 
   const clearAlarm = () => setAlarmRinging(false)
 
+  // Clear today's count. The persistence effect saves it under today's date.
+  const clearToday = useCallback(() => setTodayCount(0), [])
+
   const toggle = useCallback(() => {
     setAlarmRinging(false)
     if (running) {
@@ -173,5 +178,6 @@ export function useTimer(settings: Settings, onIntervalEnd: (e: IntervalEnd) => 
     skip,
     selectMode,
     stopAlarm: clearAlarm,
+    clearToday,
   }
 }

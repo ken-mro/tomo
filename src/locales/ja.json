@@ -21,7 +21,8 @@
   "progress": {
     "today": "今日",
     "pomodoros": "今日 {{count}} ポモドーロ完了",
-    "cycle": "セッション {{current}} / {{total}}"
+    "cycle": "セッション {{current}} / {{total}}",
+    "clearToday": "今日のカウントをリセット"
   },
   "break": {
     "heading": "ひと息つきましょう",
@@ -51,6 +52,7 @@
     "volume": "音量",
     "alarmSound": "アラーム音",
     "uploadSound": "自分の音をアップロード…",
+    "deleteSound": "アップロードした音を削除",
     "customSound": "カスタム: {{name}}",
     "preview": "{{name}} を再生",
     "appearance": "外観",
