@@ -735,7 +735,21 @@ input[type='range'] {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 14px;
+}
+/* Landscape: a fixed-width aside with a reserved label height keeps the ring and
+   controls in the same position across modes and locales — a long label (e.g.
+   Spanish "Descanso largo") wraps within the box instead of shifting the layout. */
+.pip-root--landscape .pip-aside {
+  width: 152px;
+  flex: none;
+}
+.pip-root--landscape .pip-mode {
+  max-width: 100%;
+  height: 38px;
+  justify-content: center;
+  text-align: center;
 }
 
 .pip-mode {
