@@ -414,6 +414,14 @@ button,
 .controls--compact {
   gap: 10px;
 }
+/* In the PiP window the primary button is icon-only, so render it as a round
+   button instead of inheriting the main view's wide pill. */
+.controls--compact .btn--primary {
+  min-width: 0;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+}
 .stop-alarm {
   margin-top: -4px;
 }
