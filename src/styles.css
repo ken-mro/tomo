@@ -747,7 +747,7 @@ input[type='range'] {
 }
 .pip-root--landscape .pip-mode {
   max-width: 100%;
-  height: 78px;
+  height: 80px;
   justify-content: center;
   text-align: center;
 }
@@ -759,6 +759,9 @@ input[type='range'] {
   gap: 4px;
   font-weight: 700;
   font-size: 14px;
+  /* Explicit line-height keeps the reserved landscape height predictable when
+     the label wraps to two lines (avoids overlap from default font metrics). */
+  line-height: 1.2;
   letter-spacing: 0.5px;
   color: var(--accent-dark);
   text-transform: uppercase;

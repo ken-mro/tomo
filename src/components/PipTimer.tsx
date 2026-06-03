@@ -17,6 +17,9 @@ interface PipTimerProps {
   onSkip: () => void
 }
 
+/** Mascot size in the mini window (shared by both layouts). */
+const MASCOT_SIZE = 40
+
 /** The compact timer rendered into the floating PiP window, with a progress ring. */
 export function PipTimer({ mode, remainingMs, durationMs, running, started, alarm, layout, onToggle, onSkip }: PipTimerProps) {
   const { t } = useTranslation()
@@ -33,7 +36,7 @@ export function PipTimer({ mode, remainingMs, durationMs, running, started, alar
         <div className="pip-ring__label">
           {layout === 'portrait' && (
             <div className="pip-mode">
-              <Mascot size={40} decorative />
+              <Mascot size={MASCOT_SIZE} decorative />
               <span>{label}</span>
             </div>
           )}
@@ -44,7 +47,7 @@ export function PipTimer({ mode, remainingMs, durationMs, running, started, alar
       {layout === 'landscape' && (
         <div className="pip-aside">
           <div className="pip-mode">
-            <Mascot size={40} decorative />
+            <Mascot size={MASCOT_SIZE} decorative />
             <span>{label}</span>
           </div>
           {controls}
