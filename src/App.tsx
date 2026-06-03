@@ -29,7 +29,7 @@ const ICON_URL = new URL('tomo.svg', document.baseURI).href
 // PiP window dimensions per layout: portrait is taller, landscape is wider.
 const PIP_SIZES: Record<PipLayout, PipSize> = {
   portrait: { width: 300, height: 380 },
-  landscape: { width: 480, height: 240 },
+  landscape: { width: 440, height: 240 },
 }
 // The Fullscreen API is unavailable on some mobile browsers (notably iOS Safari).
 const FULLSCREEN_SUPPORTED = typeof document !== 'undefined' && !!document.fullscreenEnabled
