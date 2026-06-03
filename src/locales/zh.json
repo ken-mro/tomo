@@ -64,7 +64,10 @@
     "language": "语言",
     "theme": "主题",
     "themeLight": "浅色",
-    "themeDark": "深色"
+    "themeDark": "深色",
+    "pipLayout": "迷你窗口",
+    "pipPortrait": "竖向",
+    "pipLandscape": "横向"
   },
   "sounds": {
     "bell": "铃声",

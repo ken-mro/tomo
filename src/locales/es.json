@@ -65,7 +65,10 @@
     "language": "Idioma",
     "theme": "Tema",
     "themeLight": "Claro",
-    "themeDark": "Oscuro"
+    "themeDark": "Oscuro",
+    "pipLayout": "Ventana mini",
+    "pipPortrait": "Vertical",
+    "pipLandscape": "Horizontal"
   },
   "sounds": {
     "bell": "Campana",
