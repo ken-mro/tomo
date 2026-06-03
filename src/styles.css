@@ -711,8 +711,8 @@ input[type='range'] {
 }
 /* Landscape: a compact ring (time only) on the left, mode + controls beside it. */
 .pip-root--landscape .pip-ring {
-  width: min(46vw, 84vh);
-  height: min(46vw, 84vh);
+  width: min(44vw, 80vh);
+  height: min(44vw, 80vh);
 }
 .pip-aside {
   display: flex;
