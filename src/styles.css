@@ -414,13 +414,20 @@ button,
 .controls--compact {
   gap: 10px;
 }
-/* In the PiP window the primary button is icon-only, so render it as a round
-   button instead of inheriting the main view's wide pill. */
+/* In the PiP window both controls are icon-only round buttons: the primary is
+   rendered as a round button (not the main view's wide pill), paired with a
+   slightly smaller skip button. Sizes are fixed here so they stay consistent
+   and aren't shrunk by the narrow-screen (max-width: 360px) .btn--icon rule,
+   since the portrait PiP window is only 300px wide. */
 .controls--compact .btn--primary {
   min-width: 0;
   width: 52px;
   height: 52px;
   padding: 0;
+}
+.controls--compact .btn--icon {
+  width: 44px;
+  height: 44px;
 }
 .stop-alarm {
   margin-top: -4px;
