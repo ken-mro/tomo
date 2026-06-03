@@ -1,5 +1,8 @@
 export type Mode = 'work' | 'short' | 'long'
 
+/** Orientation of the Picture-in-Picture mini window. */
+export type PipLayout = 'portrait' | 'landscape'
+
 export interface Settings {
   /** Durations in minutes. */
   workMin: number
@@ -14,6 +17,8 @@ export interface Settings {
   tickingEnabled: boolean
   /** Built-in sound id, or the sentinel for the user's uploaded sound. */
   sound: string
+  /** Orientation of the Picture-in-Picture window. */
+  pipLayout: PipLayout
 }
 
 export interface Stats {

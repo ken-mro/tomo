@@ -64,7 +64,10 @@
     "language": "言語",
     "theme": "テーマ",
     "themeLight": "ライト",
-    "themeDark": "ダーク"
+    "themeDark": "ダーク",
+    "pipLayout": "ミニウィンドウ",
+    "pipPortrait": "縦向き",
+    "pipLandscape": "横向き"
   },
   "sounds": {
     "bell": "ベル",

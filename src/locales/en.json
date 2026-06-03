@@ -65,7 +65,10 @@
     "language": "Language",
     "theme": "Theme",
     "themeLight": "Light",
-    "themeDark": "Dark"
+    "themeDark": "Dark",
+    "pipLayout": "Mini window",
+    "pipPortrait": "Portrait",
+    "pipLandscape": "Landscape"
   },
   "sounds": {
     "bell": "Bell",

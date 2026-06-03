@@ -16,7 +16,8 @@ import { useTheme } from './hooks/useTheme'
 import { usePip } from './hooks/usePip'
 import { useRingDial } from './hooks/useRingDial'
 
-import type { Settings } from './types'
+import type { PipLayout, Settings } from './types'
+import type { PipSize } from './hooks/usePip'
 import { loadSettings, saveSettings, DEFAULT_SETTINGS } from './lib/storage'
 import { formatTime } from './lib/format'
 import { playAlarm, startTicking, stopTicking } from './lib/sounds'
@@ -25,6 +26,11 @@ import { saveCustomSound, loadCustomSound, clearCustomSound } from './lib/idb'
 import { CUSTOM_SOUND_ID } from './types'
 
 const ICON_URL = new URL('tomo.svg', document.baseURI).href
+// PiP window dimensions per layout: portrait is taller, landscape is wider.
+const PIP_SIZES: Record<PipLayout, PipSize> = {
+  portrait: { width: 300, height: 380 },
+  landscape: { width: 480, height: 240 },
+}
 // The Fullscreen API is unavailable on some mobile browsers (notably iOS Safari).
 const FULLSCREEN_SUPPORTED = typeof document !== 'undefined' && !!document.fullscreenEnabled
 
@@ -186,6 +192,19 @@ export default function App() {
     doc.documentElement.lang = i18n.resolvedLanguage ?? 'en'
   }, [pip.pipWindow, theme, i18n.resolvedLanguage])
 
+  const pipSize = PIP_SIZES[settings.pipLayout]
+  const togglePip = useCallback(() => pip.toggle(pipSize), [pip, pipSize])
+
+  // When the PiP layout changes while the window is open, reopen it at the new
+  // size. Tracked via a ref so this only fires on an actual layout change (not
+  // when the window simply opens/closes).
+  const prevPipLayout = useRef(settings.pipLayout)
+  useEffect(() => {
+    if (prevPipLayout.current === settings.pipLayout) return
+    prevPipLayout.current = settings.pipLayout
+    if (pip.isOpen) void pip.resize(PIP_SIZES[settings.pipLayout])
+  }, [settings.pipLayout, pip])
+
   const handleUploadSound = useCallback(
     (file: File) => {
       void saveCustomSound(file, file.name).then(() => {
@@ -227,7 +246,7 @@ export default function App() {
         onToggleTheme={toggleTheme}
         pipSupported={pip.supported}
         pipOpen={pip.isOpen}
-        onTogglePip={pip.toggle}
+        onTogglePip={togglePip}
         isFullscreen={isFullscreen}
         onToggleFullscreen={toggleFullscreen}
         fullscreenSupported={FULLSCREEN_SUPPORTED}
@@ -299,6 +318,7 @@ export default function App() {
         onClose={() => setSettingsOpen(false)}
         settings={settings}
         onChange={updateSettings}
+        pipSupported={pip.supported}
         theme={theme}
         onSetTheme={setTheme}
         customSoundName={customSoundName}
@@ -313,9 +333,11 @@ export default function App() {
           <PipTimer
             mode={timer.mode}
             remainingMs={timer.remainingMs}
+            durationMs={timer.durationMs}
             running={timer.running}
             started={started}
             alarm={timer.alarmRinging}
+            layout={settings.pipLayout}
             onToggle={handleToggle}
             onSkip={timer.skip}
           />,

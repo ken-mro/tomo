@@ -11,6 +11,8 @@ interface SettingsPanelProps {
   onClose: () => void
   settings: Settings
   onChange: (patch: Partial<Settings>) => void
+  /** Whether Document Picture-in-Picture is available (hides the PiP layout option if not). */
+  pipSupported: boolean
   theme: ThemeChoice
   onSetTheme: (t: ThemeChoice) => void
   customSoundName: string | null
@@ -96,6 +98,7 @@ export function SettingsPanel({
   onClose,
   settings,
   onChange,
+  pipSupported,
   theme,
   onSetTheme,
   customSoundName,
@@ -236,6 +239,25 @@ export function SettingsPanel({
                 </button>
               </div>
             </div>
+            {pipSupported && (
+              <div className="field">
+                <span className="field__label">{t('settings.pipLayout')}</span>
+                <div className="segmented">
+                  <button
+                    className={`segmented__btn${settings.pipLayout === 'portrait' ? ' is-active' : ''}`}
+                    onClick={() => onChange({ pipLayout: 'portrait' })}
+                  >
+                    {t('settings.pipPortrait')}
+                  </button>
+                  <button
+                    className={`segmented__btn${settings.pipLayout === 'landscape' ? ' is-active' : ''}`}
+                    onClick={() => onChange({ pipLayout: 'landscape' })}
+                  >
+                    {t('settings.pipLandscape')}
+                  </button>
+                </div>
+              </div>
+            )}
           </section>
         </div>
 
