@@ -77,16 +77,20 @@ export function usePip() {
   )
 
   // Resize an open PiP window by reopening it (Document PiP can't be resized in
-  // place). Best-effort: relies on the originating user gesture still being a
-  // valid transient activation; on failure the existing window is kept.
+  // place): open the new window first, then close the previous one — so if the
+  // reopen fails the existing window is left untouched. Best-effort: relies on
+  // the originating user gesture still being a valid transient activation.
   const resize = useCallback(
     async (size: PipSize) => {
       if (!PIP_SUPPORTED || !pipWindow) return
-      pipWindow.close()
+      const previous = pipWindow
       try {
         await spawn(size)
+        // spawn() has now set state to the new window; closing the old one's
+        // pagehide is a no-op thanks to the identity guard in spawn().
+        previous.close()
       } catch {
-        /* reopen failed — the old window is already closing, nothing to restore */
+        /* reopen failed — keep the existing window */
       }
     },
     [pipWindow, spawn],
