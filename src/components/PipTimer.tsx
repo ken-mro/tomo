@@ -33,7 +33,7 @@ export function PipTimer({ mode, remainingMs, durationMs, running, started, alar
         <div className="pip-ring__label">
           {layout === 'portrait' && (
             <div className="pip-mode">
-              <Mascot size={18} decorative />
+              <Mascot size={40} decorative />
               <span>{label}</span>
             </div>
           )}
@@ -44,7 +44,7 @@ export function PipTimer({ mode, remainingMs, durationMs, running, started, alar
       {layout === 'landscape' && (
         <div className="pip-aside">
           <div className="pip-mode">
-            <Mascot size={18} decorative />
+            <Mascot size={40} decorative />
             <span>{label}</span>
           </div>
           {controls}

@@ -747,20 +747,22 @@ input[type='range'] {
 }
 .pip-root--landscape .pip-mode {
   max-width: 100%;
-  height: 38px;
+  height: 78px;
   justify-content: center;
   text-align: center;
 }
 
 .pip-mode {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 7px;
+  gap: 4px;
   font-weight: 700;
   font-size: 14px;
   letter-spacing: 0.5px;
   color: var(--accent-dark);
   text-transform: uppercase;
+  text-align: center;
 }
 .pip-time {
   font-family: var(--font-wordmark);
