@@ -705,7 +705,9 @@ input[type='range'] {
   place-items: center;
   flex: none;
 }
-.pip-ring svg {
+/* Only the ring SVG itself fills the box — use a direct-child selector so the
+   mascot and control icons nested inside .pip-ring__label keep their own sizes. */
+.pip-ring > svg {
   display: block;
   width: 100%;
   height: 100%;
