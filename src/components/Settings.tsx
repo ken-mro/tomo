@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import type { Settings } from '../types'
 import { CUSTOM_SOUND_ID } from '../types'
 import { BUILT_IN_SOUNDS, playAlarm } from '../lib/sounds'
-import { testAlarm } from '../lib/alarmScheduler'
+import { primeAlarmAudio, testAlarm } from '../lib/alarmScheduler'
 import { SUPPORTED_LANGUAGES } from '../i18n'
 import type { ThemeChoice } from '../lib/storage'
 
@@ -154,7 +154,16 @@ export function SettingsPanel({
             <Toggle label={t('settings.autoStartBreaks')} checked={settings.autoStartBreaks} onChange={(autoStartBreaks) => onChange({ autoStartBreaks })} />
             <Toggle label={t('settings.autoStartPomodoros')} checked={settings.autoStartPomodoros} onChange={(autoStartPomodoros) => onChange({ autoStartPomodoros })} />
             <Toggle label={t('settings.ticking')} checked={settings.tickingEnabled} onChange={(tickingEnabled) => onChange({ tickingEnabled })} />
-            <Toggle label={t('settings.backgroundAlarm')} checked={settings.backgroundAlarm} onChange={(backgroundAlarm) => onChange({ backgroundAlarm })} />
+            <Toggle
+              label={t('settings.backgroundAlarm')}
+              checked={settings.backgroundAlarm}
+              onChange={(backgroundAlarm) => {
+                // Prime the keepalive within this click so media.play() isn't blocked
+                // by autoplay policy when enabling the setting mid-session.
+                if (backgroundAlarm) primeAlarmAudio()
+                onChange({ backgroundAlarm })
+              }}
+            />
             {settings.backgroundAlarm && (
               <>
                 <button type="button" className="btn btn--soft btn--block" onClick={runBackgroundTest} disabled={timerRunning}>

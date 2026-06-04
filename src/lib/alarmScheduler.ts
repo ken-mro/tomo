@@ -121,6 +121,9 @@ function stopKeepAlive() {
   if ('mediaSession' in navigator) {
     try {
       navigator.mediaSession.playbackState = 'none'
+      navigator.mediaSession.metadata = null
+      navigator.mediaSession.setActionHandler('play', null)
+      navigator.mediaSession.setActionHandler('pause', null)
     } catch {
       /* ignore */
     }
@@ -146,7 +149,8 @@ function stopKeepAlive() {
  */
 export function primeAlarmAudio(): void {
   const c = getCtx()
-  if (c && c.state === 'suspended') void c.resume().catch(() => {})
+  if (!c) return // no Web Audio support: background scheduling can't work, so don't publish a media session
+  if (c.state === 'suspended') void c.resume().catch(() => {})
   startKeepAlive()
 }
 
