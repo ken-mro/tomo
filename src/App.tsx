@@ -345,6 +345,7 @@ export default function App() {
         settings={settings}
         onChange={updateSettings}
         pipSupported={pip.supported}
+        timerRunning={timer.running}
         theme={theme}
         onSetTheme={setTheme}
         customSoundName={customSoundName}

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import type { Settings } from '../types'
 import { CUSTOM_SOUND_ID } from '../types'
 import { BUILT_IN_SOUNDS, playAlarm } from '../lib/sounds'
+import { testAlarm } from '../lib/alarmScheduler'
 import { SUPPORTED_LANGUAGES } from '../i18n'
 import type { ThemeChoice } from '../lib/storage'
 
@@ -13,6 +14,8 @@ interface SettingsPanelProps {
   onChange: (patch: Partial<Settings>) => void
   /** Whether Document Picture-in-Picture is available (hides the PiP layout option if not). */
   pipSupported: boolean
+  /** Whether a timer is currently running (the background test is disabled then to avoid disrupting it). */
+  timerRunning: boolean
   theme: ThemeChoice
   onSetTheme: (t: ThemeChoice) => void
   customSoundName: string | null
@@ -99,6 +102,7 @@ export function SettingsPanel({
   settings,
   onChange,
   pipSupported,
+  timerRunning,
   theme,
   onSetTheme,
   customSoundName,
@@ -107,6 +111,16 @@ export function SettingsPanel({
 }: SettingsPanelProps) {
   const { t, i18n } = useTranslation()
   const fileRef = useRef<HTMLInputElement>(null)
+  const [testHint, setTestHint] = useState<string | null>(null)
+  const testTimer = useRef<number | undefined>(undefined)
+
+  const runBackgroundTest = () => {
+    const secs = Math.round(testAlarm(settings.sound, settings.volume) / 1000)
+    setTestHint(t('settings.backgroundAlarmTestHint', { secs }))
+    window.clearTimeout(testTimer.current)
+    testTimer.current = window.setTimeout(() => setTestHint(null), (secs + 4) * 1000)
+  }
+  useEffect(() => () => window.clearTimeout(testTimer.current), [])
 
   const soundOptions = [
     ...BUILT_IN_SOUNDS.map((s) => ({ id: s.id, name: t(`sounds.${s.id}`) })),
@@ -141,6 +155,14 @@ export function SettingsPanel({
             <Toggle label={t('settings.autoStartPomodoros')} checked={settings.autoStartPomodoros} onChange={(autoStartPomodoros) => onChange({ autoStartPomodoros })} />
             <Toggle label={t('settings.ticking')} checked={settings.tickingEnabled} onChange={(tickingEnabled) => onChange({ tickingEnabled })} />
             <Toggle label={t('settings.backgroundAlarm')} checked={settings.backgroundAlarm} onChange={(backgroundAlarm) => onChange({ backgroundAlarm })} />
+            {settings.backgroundAlarm && (
+              <>
+                <button type="button" className="btn btn--soft btn--block" onClick={runBackgroundTest} disabled={timerRunning}>
+                  {t('settings.backgroundAlarmTest')}
+                </button>
+                {testHint && <p className="field__hint">{testHint}</p>}
+              </>
+            )}
           </section>
 
           <section>

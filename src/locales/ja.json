@@ -54,6 +54,8 @@
     "autoStartPomodoros": "次のポモドーロを自動で開始",
     "ticking": "作業中にチクタク音を鳴らす",
     "backgroundAlarm": "画面オフでもアラームを鳴らす",
+    "backgroundAlarmTest": "画面オフでテスト",
+    "backgroundAlarmTestHint": "今すぐ画面をロックしてください。約{{secs}}秒後にアラームが鳴ります。",
     "sound": "サウンド",
     "volume": "音量",
     "alarmSound": "アラーム音",

@@ -1,16 +1,23 @@
 // Schedules the end-of-interval alarm on the Web Audio clock so it can fire even
 // when the screen is off / the tab is backgrounded (where setTimeout/setInterval
-// are throttled). A near-silent keepalive loop keeps the AudioContext running in
-// the background. This is best-effort: some platforms (notably iOS Safari) may
-// still suspend background audio, so the foreground HTMLAudio path remains as a
-// fallback.
+// are throttled).
+//
+// To survive the screen being locked on Android, a near-silent keepalive needs
+// to look like real media playback: we loop a silent <audio> element and publish
+// a MediaSession, the same trick music/podcast PWAs use to keep audio alive in
+// the background. A Web Audio keepalive source is also kept running so the
+// AudioContext doesn't get suspended. This is best-effort: some platforms
+// (notably iOS Safari) may still suspend background audio, so the foreground
+// HTMLAudio path remains as a fallback.
 import { resolveSound } from './sounds'
 import { CUSTOM_SOUND_ID } from '../types'
 
 type Ctx = AudioContext
 
 let ctx: Ctx | null = null
-let keepAlive: AudioBufferSourceNode | null = null
+let waKeepAlive: AudioBufferSourceNode | null = null
+let media: HTMLAudioElement | null = null
+let silentUri = ''
 let scheduled: AudioBufferSourceNode | null = null
 // Epoch ms the scheduled alarm fires, so we can tell "already playing" from "still pending".
 let scheduledEndMs = 0
@@ -28,10 +35,119 @@ function getCtx(): Ctx | null {
   return ctx
 }
 
-/** Create/resume the AudioContext from within a user gesture (e.g. Start) so later background scheduling is allowed. */
+// A tiny WAV of (essentially) silence, as a data URI, for the media-element
+// keepalive. The samples are a hair above zero so the platform treats the
+// element as producing audio rather than optimising it away as pure silence.
+function silentWavUri(): string {
+  if (silentUri) return silentUri
+  const sampleRate = 8000
+  const samples = sampleRate // 1 second, looped
+  const dataSize = samples * 2 // 16-bit mono
+  const buf = new ArrayBuffer(44 + dataSize)
+  const view = new DataView(buf)
+  const str = (off: number, s: string) => {
+    for (let i = 0; i < s.length; i++) view.setUint8(off + i, s.charCodeAt(i))
+  }
+  str(0, 'RIFF')
+  view.setUint32(4, 36 + dataSize, true)
+  str(8, 'WAVE')
+  str(12, 'fmt ')
+  view.setUint32(16, 16, true)
+  view.setUint16(20, 1, true) // PCM
+  view.setUint16(22, 1, true) // mono
+  view.setUint32(24, sampleRate, true)
+  view.setUint32(28, sampleRate * 2, true)
+  view.setUint16(32, 2, true)
+  view.setUint16(34, 16, true)
+  str(36, 'data')
+  view.setUint32(40, dataSize, true)
+  for (let i = 0; i < samples; i++) view.setInt16(44 + i * 2, 4, true) // ~-78 dB, inaudible but non-zero
+  let bin = ''
+  const bytes = new Uint8Array(buf)
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i])
+  silentUri = 'data:audio/wav;base64,' + btoa(bin)
+  return silentUri
+}
+
+function startKeepAlive() {
+  // Media-element + MediaSession keepalive — this is what keeps audio alive with
+  // the screen locked on Android.
+  if (!media) {
+    const el = new Audio(silentWavUri())
+    el.loop = true
+    el.preload = 'auto'
+    media = el
+  }
+  void media.play().catch(() => {})
+  if ('mediaSession' in navigator) {
+    try {
+      const md = (window as unknown as { MediaMetadata?: typeof MediaMetadata }).MediaMetadata
+      if (md) navigator.mediaSession.metadata = new md({ title: 'tomo', artist: 'Focus timer' })
+      navigator.mediaSession.playbackState = 'playing'
+      navigator.mediaSession.setActionHandler('play', () => void media?.play().catch(() => {}))
+      navigator.mediaSession.setActionHandler('pause', () => {})
+    } catch {
+      /* MediaSession is optional */
+    }
+  }
+  // Web Audio keepalive so the AudioContext keeps rendering the scheduled alarm.
+  const c = getCtx()
+  if (c && !waKeepAlive) {
+    const src = c.createBufferSource()
+    src.buffer = c.createBuffer(1, c.sampleRate, c.sampleRate)
+    src.loop = true
+    const g = c.createGain()
+    g.gain.value = 0.0001
+    src.connect(g).connect(c.destination)
+    try {
+      src.start()
+    } catch {
+      /* already started */
+    }
+    waKeepAlive = src
+  }
+}
+
+function stopKeepAlive() {
+  if (media) {
+    try {
+      media.pause()
+    } catch {
+      /* ignore */
+    }
+    media.removeAttribute('src')
+    media = null
+  }
+  if ('mediaSession' in navigator) {
+    try {
+      navigator.mediaSession.playbackState = 'none'
+    } catch {
+      /* ignore */
+    }
+  }
+  if (waKeepAlive) {
+    try {
+      waKeepAlive.stop()
+    } catch {
+      /* ignore */
+    }
+    try {
+      waKeepAlive.disconnect()
+    } catch {
+      /* ignore */
+    }
+    waKeepAlive = null
+  }
+}
+
+/**
+ * Create/resume the AudioContext and start the background keepalive from within a
+ * user gesture (e.g. Start), so audio can later play with the screen off.
+ */
 export function primeAlarmAudio(): void {
   const c = getCtx()
   if (c && c.state === 'suspended') void c.resume().catch(() => {})
+  startKeepAlive()
 }
 
 async function decodeFor(c: Ctx, id: string): Promise<AudioBuffer | null> {
@@ -49,22 +165,6 @@ async function decodeFor(c: Ctx, id: string): Promise<AudioBuffer | null> {
   } finally {
     if (resolved.temporary) URL.revokeObjectURL(resolved.url)
   }
-}
-
-function ensureKeepAlive(c: Ctx) {
-  if (keepAlive) return
-  const src = c.createBufferSource()
-  src.buffer = c.createBuffer(1, c.sampleRate, c.sampleRate)
-  src.loop = true
-  const g = c.createGain()
-  g.gain.value = 0.0001 // inaudible, but non-zero so the context keeps rendering in the background
-  src.connect(g).connect(c.destination)
-  try {
-    src.start()
-  } catch {
-    /* already started — ignore */
-  }
-  keepAlive = src
 }
 
 // Drop the scheduled alarm. By default an alarm that has already started firing
@@ -104,7 +204,7 @@ export async function armAlarm(soundId: string, volume: number, endTimeMs: numbe
     const buf = await decodeFor(c, soundId)
     if (!buf || mine !== token) return // superseded or failed
     clearScheduled()
-    ensureKeepAlive(c)
+    startKeepAlive()
     const when = c.currentTime + Math.max(0, (endTimeMs - Date.now()) / 1000)
     const src = c.createBufferSource()
     src.buffer = buf
@@ -130,27 +230,31 @@ export async function armAlarm(soundId: string, volume: number, endTimeMs: numbe
   }
 }
 
+/**
+ * Arm the alarm `delayMs` from now (default 10s) so the user can lock the screen
+ * and verify background playback quickly. Returns the delay actually used.
+ */
+export function testAlarm(soundId: string, volume: number, delayMs = 10000): number {
+  primeAlarmAudio()
+  void armAlarm(soundId, volume, Date.now() + delayMs)
+  // armAlarm bumped `token` synchronously; if nothing else arms/disarms before the
+  // test finishes, tidy up the keepalive so a one-off test doesn't loop forever.
+  const mine = token
+  window.setTimeout(() => {
+    if (token === mine) disarmAlarm()
+  }, delayMs + 4000)
+  return delayMs
+}
+
 /** Stop a playing or pending scheduled alarm (e.g. the Stop button), leaving the keepalive in place. */
 export function silenceAlarm(): void {
   clearScheduled(true)
 }
 
-/** Cancel a pending alarm (lets a just-fired one finish) and let the AudioContext idle. */
+/** Cancel a pending alarm (lets a just-fired one finish) and let the keepalive idle. */
 export function disarmAlarm(): void {
   token++
   armed = false
   clearScheduled(false)
-  if (keepAlive) {
-    try {
-      keepAlive.stop()
-    } catch {
-      /* ignore */
-    }
-    try {
-      keepAlive.disconnect()
-    } catch {
-      /* ignore */
-    }
-    keepAlive = null
-  }
+  stopKeepAlive()
 }

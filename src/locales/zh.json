@@ -54,6 +54,8 @@
     "autoStartPomodoros": "自动开始下一个番茄钟",
     "ticking": "专注时播放滴答声",
     "backgroundAlarm": "息屏时也播放提醒音",
+    "backgroundAlarmTest": "息屏测试",
+    "backgroundAlarmTestHint": "现在锁屏，约 {{secs}} 秒后提醒音应会响起。",
     "sound": "声音",
     "volume": "音量",
     "alarmSound": "闹铃声",
