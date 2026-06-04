@@ -55,6 +55,8 @@
     "autoStartPomodoros": "Iniciar el siguiente pomodoro automáticamente",
     "ticking": "Sonido de tic-tac al trabajar",
     "backgroundAlarm": "Sonar la alarma con la pantalla apagada",
+    "backgroundAlarmTest": "Probar con la pantalla apagada",
+    "backgroundAlarmTestHint": "Bloquea el teléfono ahora — la alarma sonará en unos {{secs}} s.",
     "sound": "Sonido",
     "volume": "Volumen",
     "alarmSound": "Sonido de alarma",

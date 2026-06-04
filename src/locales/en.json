@@ -55,6 +55,8 @@
     "autoStartPomodoros": "Auto-start next pomodoro",
     "ticking": "Ticking sound while working",
     "backgroundAlarm": "Play alarm when screen is off",
+    "backgroundAlarmTest": "Test with screen off",
+    "backgroundAlarmTestHint": "Lock your phone now — the alarm should sound in about {{secs}}s.",
     "sound": "Sound",
     "volume": "Volume",
     "alarmSound": "Alarm sound",
