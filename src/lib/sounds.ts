@@ -18,7 +18,7 @@ interface ResolvedSound {
 }
 
 /** Resolve a sound id to a playable URL, loading the custom blob from IndexedDB if needed. */
-async function resolveSound(id: string): Promise<ResolvedSound | null> {
+export async function resolveSound(id: string): Promise<ResolvedSound | null> {
   if (id === CUSTOM_SOUND_ID) {
     const custom = await loadCustomSound()
     // Custom sound chosen but the blob is gone (e.g. cleared / different profile):

@@ -17,6 +17,8 @@ export interface Settings {
   tickingEnabled: boolean
   /** Built-in sound id, or the sentinel for the user's uploaded sound. */
   sound: string
+  /** Keep the alarm audible with the screen off (background audio + wake lock). */
+  backgroundAlarm: boolean
   /** Orientation of the Picture-in-Picture window. */
   pipLayout: PipLayout
 }

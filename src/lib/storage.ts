@@ -15,6 +15,7 @@ export const DEFAULT_SETTINGS: Settings = {
   tickingEnabled: false,
   sound: 'bell',
   pipLayout: 'portrait',
+  backgroundAlarm: true,
 }
 
 export function todayISO(): string {

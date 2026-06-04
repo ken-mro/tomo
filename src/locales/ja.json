@@ -53,6 +53,7 @@
     "autoStartBreaks": "休憩を自動で開始",
     "autoStartPomodoros": "次のポモドーロを自動で開始",
     "ticking": "作業中にチクタク音を鳴らす",
+    "backgroundAlarm": "画面オフでもアラームを鳴らす",
     "sound": "サウンド",
     "volume": "音量",
     "alarmSound": "アラーム音",

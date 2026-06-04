@@ -13,6 +13,8 @@ export interface TimerApi {
   running: boolean
   /** Milliseconds left in the current interval. */
   remainingMs: number
+  /** Absolute epoch-ms time the running interval ends, or null when not running. */
+  endTime: number | null
   /** Full length of the current interval, in ms. */
   durationMs: number
   /** Completed work sessions in the current long-break cycle (0..longEvery). */
@@ -193,6 +195,7 @@ export function useTimer(settings: Settings, onIntervalEnd: (e: IntervalEnd) => 
     mode,
     running,
     remainingMs,
+    endTime: running ? endTime : null,
     durationMs: durationFor(mode),
     cycleCount,
     todayCount,
