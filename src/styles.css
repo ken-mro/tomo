@@ -411,24 +411,6 @@ button,
   align-items: center;
   gap: 14px;
 }
-.controls--compact {
-  gap: 10px;
-}
-/* In the PiP window both controls are icon-only round buttons: the primary is
-   rendered as a round button (not the main view's wide pill), paired with a
-   slightly smaller skip button. Sizes are fixed here so they stay consistent
-   and aren't shrunk by the narrow-screen (max-width: 360px) .btn--icon rule,
-   since the portrait PiP window is only 300px wide. */
-.controls--compact .btn--primary {
-  min-width: 0;
-  width: 52px;
-  height: 52px;
-  padding: 0;
-}
-.controls--compact .btn--icon {
-  width: 44px;
-  height: 44px;
-}
 .stop-alarm {
   margin-top: -4px;
 }
@@ -688,100 +670,80 @@ input[type='range'] {
 }
 .pip-root {
   height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  padding: 12px;
   box-sizing: border-box;
+  display: flex;
+  padding: 14px;
   text-align: center;
   background: radial-gradient(120% 90% at 50% 0%, var(--bg-2), var(--bg));
 }
+/* Portrait: mirror the main card — banner, ring, dots and controls stacked. */
 .pip-root--portrait {
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  --ring-size: min(64vw, 44vh);
 }
+/* Landscape: the ring sits on the left, the same info stacked in a column beside
+   it — a tidy two-pane layout that uses the wide window's space. */
 .pip-root--landscape {
   flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  --ring-size: min(44vw, 84vh);
 }
 
-/* The progress ring (same look as the main view) wrapping the timer content. */
-.pip-ring {
-  position: relative;
+/* The ring (the main view's TimerRing, sized via --ring-size above). */
+.pip-stage {
   display: grid;
   place-items: center;
   flex: none;
 }
-/* Only the ring SVG itself fills the box — use a direct-child selector so the
-   mascot and control icons nested inside .pip-ring__label keep their own sizes. */
-.pip-ring > svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-.pip-ring__label {
-  position: absolute;
-  inset: 12%;
+/* Landscape info column: holds the banner, dots, controls and stop button. */
+.pip-info {
+  flex: 1 1 auto;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-}
-/* Portrait: one big ring containing mode + time + controls. */
-.pip-root--portrait .pip-ring {
-  width: min(82vw, 72vh);
-  height: min(82vw, 72vh);
-}
-/* Landscape: a compact ring (time only) on the left, mode + controls beside it. */
-.pip-root--landscape .pip-ring {
-  width: min(44vw, 80vh);
-  height: min(44vw, 80vh);
-}
-.pip-aside {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-}
-/* Landscape: a fixed-width aside with a reserved label height keeps the ring and
-   controls in the same position across modes and locales — a long label (e.g.
-   Spanish "Descanso largo") wraps within the box instead of shifting the layout. */
-.pip-root--landscape .pip-aside {
-  width: 152px;
-  flex: none;
-}
-.pip-root--landscape .pip-mode {
-  max-width: 100%;
-  height: 80px;
-  justify-content: center;
-  text-align: center;
+  gap: 12px;
 }
 
-.pip-mode {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  font-weight: 700;
+/* Compact the shared pieces so they fit the small window. */
+.pip-banner {
+  padding: 8px 12px;
+  gap: 10px;
+}
+.pip-banner .break-banner__heading {
   font-size: 14px;
-  /* Explicit line-height keeps the reserved landscape height predictable when
-     the label wraps to two lines (avoids overlap from default font metrics). */
-  line-height: 1.2;
+}
+.pip-banner .break-banner__sub {
+  font-size: 12px;
+}
+.pip-root .timer-ring__time {
+  font-size: calc(var(--ring-size) * 0.3);
+}
+.pip-root .timer-ring__mode {
+  font-size: 12px;
   letter-spacing: 0.5px;
-  color: var(--accent-dark);
-  text-transform: uppercase;
-  text-align: center;
 }
-.pip-time {
-  font-family: var(--font-wordmark);
-  font-weight: 500;
-  font-size: 44px;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
+/* Slim the labelled controls so reset + start + skip fit the narrow window. */
+.pip-root .controls {
+  gap: 10px;
 }
-.pip-root--landscape .pip-time {
-  font-size: 40px;
+.pip-root .btn--primary {
+  min-width: 0;
+  padding: 11px 20px;
+  font-size: 15px;
+}
+.pip-root .btn--icon {
+  width: 38px;
+  height: 38px;
+}
+.pip-stop {
+  margin-top: -2px;
 }
 .pip-root.is-alarm {
   animation: pip-flash 0.7s steps(1) infinite;
@@ -860,6 +822,10 @@ input[type='range'] {
    The whole app is locked to the viewport height and centred, so the card
    always fits without any vertical scroll. The ring scales with the available
    height (vh) so it shrinks on very short screens instead of overflowing. */
+/* These rules are scoped to `.app` so they only restyle the main view. The PiP
+   window injects this same stylesheet but its content lives outside `.app`
+   (under `.pip-root`), and its landscape window would otherwise match this query
+   and inherit the main view's compactions (e.g. hidden subheading / ring label). */
 @media (orientation: landscape) and (max-height: 560px) {
   .app {
     height: 100dvh;
@@ -869,10 +835,10 @@ input[type='range'] {
     padding: 8px 16px;
     gap: 8px;
   }
-  .app-header {
+  .app .app-header {
     max-width: 820px;
   }
-  .timer-card {
+  .app .timer-card {
     max-width: 760px;
     margin: 0 auto;
     display: grid;
@@ -889,58 +855,58 @@ input[type='range'] {
     row-gap: 10px;
     padding: 12px clamp(14px, 4vw, 26px);
   }
-  .timer-stage {
+  .app .timer-stage {
     grid-area: stage;
   }
-  .mode-tabs {
+  .app .mode-tabs {
     grid-area: tabs;
   }
-  .break-banner {
+  .app .break-banner {
     grid-area: banner;
     width: 100%;
     padding: 6px 12px;
     gap: 10px;
   }
-  .break-banner__mascot {
+  .app .break-banner__mascot {
     width: 34px;
     height: 34px;
   }
-  .break-banner__heading {
+  .app .break-banner__heading {
     font-size: 13px;
   }
   /* The subheading is dropped in the compact layout to save horizontal space. */
-  .break-banner__sub {
+  .app .break-banner__sub {
     display: none;
   }
-  .timer-side {
+  .app .timer-side {
     grid-area: side;
     gap: 10px;
   }
   /* Scale the ring to the viewport height so it never forces the card taller
      than the screen; clamp keeps it readable on the shortest phones. */
-  .timer-ring {
+  .app .timer-ring {
     --ring-size: clamp(116px, 36vh, 156px);
   }
   /* Derive the time from the ring size so it stays well-proportioned (never
      cramped against the stroke) at every clamped ring size. */
-  .timer-ring__time {
+  .app .timer-ring__time {
     font-size: calc(var(--ring-size) * 0.28);
   }
   /* The mode is already shown by the active tab (and the break banner), so the
      in-ring label is hidden here — it can't fit a long label like "LONG BREAK"
      inside the compact ring without overflowing, and the time centers nicely. */
-  .timer-ring__mode {
+  .app .timer-ring__mode {
     display: none;
   }
   /* Keep the tabs from overflowing the right column on narrow landscape. */
-  .mode-tab {
+  .app .mode-tab {
     padding: 7px 12px;
     font-size: 12px;
   }
-  .today-count {
+  .app .today-count {
     margin-top: 0;
   }
-  .stop-alarm {
+  .app .stop-alarm {
     margin-top: 0;
   }
 }

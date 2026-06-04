@@ -7,7 +7,6 @@ interface ControlsProps {
   onToggle: () => void
   onReset: () => void
   onSkip: () => void
-  compact?: boolean
 }
 
 function PlayIcon() {
@@ -40,21 +39,19 @@ function SkipIcon() {
   )
 }
 
-export function Controls({ running, started, onToggle, onReset, onSkip, compact = false }: ControlsProps) {
+export function Controls({ running, started, onToggle, onReset, onSkip }: ControlsProps) {
   const { t } = useTranslation()
   const primaryLabel = running ? t('controls.pause') : started ? t('controls.resume') : t('controls.start')
   const primaryAria = running ? t('controls.pauseAria') : started ? t('controls.resumeAria') : t('controls.startAria')
 
   return (
-    <div className={`controls${compact ? ' controls--compact' : ''}`}>
-      {!compact && (
-        <button className="btn btn--ghost btn--icon" onClick={onReset} aria-label={t('controls.resetAria')} title={t('controls.reset')}>
-          <ResetIcon />
-        </button>
-      )}
+    <div className="controls">
+      <button className="btn btn--ghost btn--icon" onClick={onReset} aria-label={t('controls.resetAria')} title={t('controls.reset')}>
+        <ResetIcon />
+      </button>
       <button className="btn btn--primary" onClick={onToggle} aria-label={primaryAria}>
         {running ? <PauseIcon /> : <PlayIcon />}
-        {!compact && <span>{primaryLabel}</span>}
+        <span>{primaryLabel}</span>
       </button>
       <button className="btn btn--ghost btn--icon" onClick={onSkip} aria-label={t('controls.skipAria')} title={t('controls.skip')}>
         <SkipIcon />
