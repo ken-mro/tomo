@@ -715,6 +715,10 @@ input[type='range'] {
 .pip-banner {
   padding: 8px 12px;
   gap: 10px;
+  /* .pip-root centers its content (ring label, dots, controls), but the banner
+     text is left-aligned in the main view — keep it that way here so the PiP
+     banner mirrors the main card. `start` stays correct under RTL. */
+  text-align: start;
 }
 .pip-banner .break-banner__heading {
   font-size: 14px;
