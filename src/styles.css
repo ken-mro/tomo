@@ -721,6 +721,14 @@ input[type='range'] {
 }
 .pip-banner .break-banner__sub {
   font-size: 12px;
+  line-height: 1.35;
+}
+/* Landscape centers the info column as one block, so a taller banner would shove
+   the ring, dots and controls around when the subheading wraps differently
+   between modes (focus vs break). Reserve room for up to three lines so the
+   banner height — and everything below it — stays put across all modes. */
+.pip-root--landscape .pip-banner .break-banner__sub {
+  min-height: calc(1.35em * 3);
 }
 .pip-root .timer-ring__time {
   font-size: calc(var(--ring-size) * 0.3);
