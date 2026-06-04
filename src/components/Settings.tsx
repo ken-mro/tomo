@@ -140,6 +140,7 @@ export function SettingsPanel({
             <Toggle label={t('settings.autoStartBreaks')} checked={settings.autoStartBreaks} onChange={(autoStartBreaks) => onChange({ autoStartBreaks })} />
             <Toggle label={t('settings.autoStartPomodoros')} checked={settings.autoStartPomodoros} onChange={(autoStartPomodoros) => onChange({ autoStartPomodoros })} />
             <Toggle label={t('settings.ticking')} checked={settings.tickingEnabled} onChange={(tickingEnabled) => onChange({ tickingEnabled })} />
+            <Toggle label={t('settings.backgroundAlarm')} checked={settings.backgroundAlarm} onChange={(backgroundAlarm) => onChange({ backgroundAlarm })} />
           </section>
 
           <section>

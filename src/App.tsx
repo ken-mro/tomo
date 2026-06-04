@@ -15,6 +15,8 @@ import { useTimer, type IntervalEnd } from './hooks/useTimer'
 import { useTheme } from './hooks/useTheme'
 import { usePip } from './hooks/usePip'
 import { useRingDial } from './hooks/useRingDial'
+import { useWakeLock } from './hooks/useWakeLock'
+import { armAlarm, disarmAlarm, isAlarmArmed, primeAlarmAudio, silenceAlarm } from './lib/alarmScheduler'
 
 import type { PipLayout, Settings } from './types'
 import type { PipSize } from './hooks/usePip'
@@ -71,13 +73,18 @@ export default function App() {
         alarmAudioRef.current.pause()
         alarmAudioRef.current = null
       }
-      void playAlarm(settings.sound, settings.volume).then((a) => {
-        if (seq !== alarmSeq.current) {
-          a?.pause()
-          return
-        }
-        alarmAudioRef.current = a
-      })
+      // When background audio is on, the alarm was pre-scheduled on the audio
+      // clock (so it can sound with the screen off); only fall back to playing
+      // here if that scheduling isn't active, to avoid a double alarm.
+      if (!settings.backgroundAlarm || !isAlarmArmed()) {
+        void playAlarm(settings.sound, settings.volume).then((a) => {
+          if (seq !== alarmSeq.current) {
+            a?.pause()
+            return
+          }
+          alarmAudioRef.current = a
+        })
+      }
       // 2. System notification (clicking it focuses the window).
       const isWork = to === 'work'
       showTimesUpNotification(
@@ -90,7 +97,7 @@ export default function App() {
       // 4. Flash the tab title until the user returns to the tab.
       setTitleFlash(true)
     },
-    [settings.sound, settings.volume, t],
+    [settings.sound, settings.volume, settings.backgroundAlarm, t],
   )
 
   const timer = useTimer(settings, handleIntervalEnd)
@@ -99,12 +106,29 @@ export default function App() {
   // Ask for notification permission on the first Start (a real user gesture).
   const askedPermission = useRef(false)
   const handleToggle = useCallback(() => {
-    if (!timer.running && !askedPermission.current) {
-      askedPermission.current = true
-      void ensureNotificationPermission()
+    if (!timer.running) {
+      // Unlock the audio context within this user gesture so the alarm can be
+      // scheduled to play later even if the screen is off.
+      if (settings.backgroundAlarm) primeAlarmAudio()
+      if (!askedPermission.current) {
+        askedPermission.current = true
+        void ensureNotificationPermission()
+      }
     }
     timer.toggle()
-  }, [timer])
+  }, [timer, settings.backgroundAlarm])
+
+  // Keep the screen awake while a timer runs (foreground), and pre-schedule the
+  // alarm on the audio clock so it can fire with the screen off. Both are gated
+  // on the backgroundAlarm setting.
+  useWakeLock(settings.backgroundAlarm && timer.running)
+  useEffect(() => {
+    if (settings.backgroundAlarm && timer.running && timer.endTime != null) {
+      void armAlarm(settings.sound, settings.volume, timer.endTime)
+    } else {
+      disarmAlarm()
+    }
+  }, [settings.backgroundAlarm, timer.running, timer.endTime, settings.sound, settings.volume])
 
   // Stop the alarm audio whenever the alarm state clears (user acted), and
   // invalidate any in-flight playAlarm promise so it can't resume playback.
@@ -115,6 +139,8 @@ export default function App() {
         alarmAudioRef.current.pause()
         alarmAudioRef.current = null
       }
+      // Also stop a scheduled/playing background alarm.
+      silenceAlarm()
     }
   }, [timer.alarmRinging])
 

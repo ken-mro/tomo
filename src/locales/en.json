@@ -54,6 +54,7 @@
     "autoStartBreaks": "Auto-start breaks",
     "autoStartPomodoros": "Auto-start next pomodoro",
     "ticking": "Ticking sound while working",
+    "backgroundAlarm": "Play alarm when screen is off",
     "sound": "Sound",
     "volume": "Volume",
     "alarmSound": "Alarm sound",
