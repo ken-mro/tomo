@@ -111,6 +111,16 @@ export async function armAlarm(soundId: string, volume: number, endTimeMs: numbe
     const g = c.createGain()
     g.gain.value = Math.max(0, Math.min(1, volume))
     src.connect(g).connect(c.destination)
+    // Once the alarm has played out, drop it and clear `armed` so a late-running
+    // (e.g. background-throttled) interval-end callback falls back to the
+    // foreground alarm instead of staying silent. By then the sound has finished,
+    // so there's no simultaneous double alarm.
+    src.onended = () => {
+      if (scheduled === src) {
+        scheduled = null
+        armed = false
+      }
+    }
     src.start(when)
     scheduled = src
     scheduledEndMs = endTimeMs
