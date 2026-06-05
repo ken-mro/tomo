@@ -76,7 +76,14 @@ export function PipTimer({
   )
 
   return (
-    <div className={`pip-root pip-root--${layout} mode-${mode}${alarm ? ' is-alarm' : ''}`}>
+    <div
+      className={`pip-root pip-root--${layout} mode-${mode}${alarm ? ' is-alarm' : ''}`}
+      // While the window is flashing an alarm, a click anywhere in it dismisses
+      // the alarm (the Stop button stays as the explicit, accessible control).
+      // The control buttons already clear the alarm themselves, so the extra
+      // bubbled call here is harmless.
+      onClick={alarm ? onStopAlarm : undefined}
+    >
       {layout === 'portrait' ? (
         <>
           {banner}

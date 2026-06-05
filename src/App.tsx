@@ -76,9 +76,17 @@ export default function App() {
         alarmAudioRef.current = null
       }
       // When background audio is on, the alarm was pre-scheduled on the audio
-      // clock (so it can sound with the screen off); only fall back to playing
-      // here if that scheduling isn't active, to avoid a double alarm.
-      if (!settings.backgroundAlarm || !isAlarmArmed()) {
+      // clock (so it can sound with the screen off). That schedule rides the
+      // audio hardware clock, which on some systems (notably Windows/Edge) drifts
+      // from wall-clock time over a long interval and can fire a touch early or
+      // late. So if we're in the foreground — where this callback fires on the
+      // wall clock, within a tick of the real end time — play the alarm now for
+      // accurate timing and cancel the (possibly drifted) scheduled one. Only
+      // lean on the pre-scheduled alarm when actually backgrounded, where timers
+      // are throttled and it's the only thing that fires on time.
+      const visible = document.visibilityState === 'visible'
+      if (!settings.backgroundAlarm || !isAlarmArmed() || visible) {
+        if (settings.backgroundAlarm && isAlarmArmed()) silenceAlarm()
         void playAlarm(settings.sound, settings.volume).then((a) => {
           if (seq !== alarmSeq.current) {
             a?.pause()
