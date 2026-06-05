@@ -32,7 +32,7 @@ const ICON_URL = new URL('tomo.svg', document.baseURI).href
 // Both now carry the full set of controls (banner, ring, dots, buttons), so the
 // windows are a touch larger than when they showed only a ring.
 const PIP_SIZES: Record<PipLayout, PipSize> = {
-  portrait: { width: 300, height: 460 },
+  portrait: { width: 300, height: 390 },
   landscape: { width: 480, height: 280 },
 }
 // The Fullscreen API is unavailable on some mobile browsers (notably iOS Safari).

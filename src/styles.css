@@ -676,13 +676,16 @@ input[type='range'] {
   text-align: center;
   background: radial-gradient(120% 90% at 50% 0%, var(--bg-2), var(--bg));
 }
-/* Portrait: mirror the main card — banner, ring, dots and controls stacked. */
+/* Portrait: mirror the main card — banner, ring, dots and controls stacked.
+   The 52vh cap (rather than 44vh) keeps the ring at its full width-based size in
+   the shorter portrait window instead of shrinking it; the window height itself
+   is what's trimmed (see PIP_SIZES) so the stack isn't swimming in empty space. */
 .pip-root--portrait {
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  --ring-size: min(64vw, 44vh);
+  --ring-size: min(64vw, 52vh);
 }
 /* Landscape: the ring sits on the left, the same info stacked in a column beside
    it — a tidy two-pane layout that uses the wide window's space. */
