@@ -29,9 +29,11 @@ import { CUSTOM_SOUND_ID } from './types'
 
 const ICON_URL = new URL('tomo.svg', document.baseURI).href
 // PiP window dimensions per layout: portrait is taller, landscape is wider.
+// Both now carry the full set of controls (banner, ring, dots, buttons), so the
+// windows are a touch larger than when they showed only a ring.
 const PIP_SIZES: Record<PipLayout, PipSize> = {
-  portrait: { width: 300, height: 380 },
-  landscape: { width: 440, height: 240 },
+  portrait: { width: 300, height: 460 },
+  landscape: { width: 480, height: 280 },
 }
 // The Fullscreen API is unavailable on some mobile browsers (notably iOS Safari).
 const FULLSCREEN_SUPPORTED = typeof document !== 'undefined' && !!document.fullscreenEnabled
@@ -365,8 +367,12 @@ export default function App() {
             started={started}
             alarm={timer.alarmRinging}
             layout={settings.pipLayout}
+            cycleCount={timer.cycleCount}
+            longEvery={timer.longEvery}
             onToggle={handleToggle}
+            onReset={timer.reset}
             onSkip={timer.skip}
+            onStopAlarm={timer.stopAlarm}
           />,
           pip.pipWindow.document.body,
         )}

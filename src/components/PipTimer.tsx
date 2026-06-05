@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next'
 import type { Mode, PipLayout } from '../types'
-import { formatTime } from '../lib/format'
 import { Controls } from './Controls'
 import { Mascot } from './Mascot'
-import { ProgressRing } from './ProgressRing'
+import { ProgressDots } from './ProgressDots'
+import { TimerRing } from './TimerRing'
 
 interface PipTimerProps {
   mode: Mode
@@ -13,45 +13,88 @@ interface PipTimerProps {
   started: boolean
   alarm: boolean
   layout: PipLayout
+  cycleCount: number
+  longEvery: number
   onToggle: () => void
+  onReset: () => void
   onSkip: () => void
+  onStopAlarm: () => void
 }
 
-/** Mascot size in the mini window (shared by both layouts). */
-const MASCOT_SIZE = 40
+/** Mascot size in the mini window's banner (shared by both layouts). */
+const MASCOT_SIZE = 36
 
-/** The compact timer rendered into the floating PiP window, with a progress ring. */
-export function PipTimer({ mode, remainingMs, durationMs, running, started, alarm, layout, onToggle, onSkip }: PipTimerProps) {
+/**
+ * The mini-window timer. It mirrors the main view — banner, ring, progress dots
+ * and controls — just without the mode tabs and the "today" count. Portrait
+ * stacks them like the main card; landscape splits them into a ring column and
+ * an info column beside it.
+ */
+export function PipTimer({
+  mode,
+  remainingMs,
+  durationMs,
+  running,
+  started,
+  alarm,
+  layout,
+  cycleCount,
+  longEvery,
+  onToggle,
+  onReset,
+  onSkip,
+  onStopAlarm,
+}: PipTimerProps) {
   const { t } = useTranslation()
-  const fraction = durationMs > 0 ? remainingMs / durationMs : 0
-  const label = alarm ? t('alarm.heading') : t(`mode.${mode}`)
-  const controls = <Controls running={running} started={started} onToggle={onToggle} onReset={() => {}} onSkip={onSkip} compact />
+  const isBreak = mode !== 'work'
+  const heading = alarm ? t('alarm.heading') : isBreak ? t('break.heading') : t('focus.heading')
 
-  // Portrait: one ring wrapping mode + time + controls. Landscape: a compact
-  // ring (time only) on the left with the mode label + controls beside it.
+  // The same building blocks as the main card, reusing its classes so they look
+  // identical — only the arrangement differs between the two PiP layouts.
+  const banner = (
+    <div className="break-banner pip-banner">
+      <Mascot size={MASCOT_SIZE} className="break-banner__mascot" decorative />
+      <div>
+        <p className="break-banner__heading">{heading}</p>
+        {!alarm && (
+          <p className="break-banner__sub">{isBreak ? t('break.subheading') : t('focus.subheading')}</p>
+        )}
+      </div>
+    </div>
+  )
+  const ring = (
+    <div className="pip-stage">
+      <TimerRing mode={mode} remainingMs={remainingMs} durationMs={durationMs} alarm={alarm} />
+    </div>
+  )
+  const dots = <ProgressDots count={cycleCount} total={longEvery} />
+  const controls = <Controls running={running} started={started} onToggle={onToggle} onReset={onReset} onSkip={onSkip} />
+  const stop = alarm && (
+    <button className="btn btn--soft pip-stop" onClick={onStopAlarm}>
+      {t('alarm.stop')}
+    </button>
+  )
+
   return (
     <div className={`pip-root pip-root--${layout} mode-${mode}${alarm ? ' is-alarm' : ''}`}>
-      <div className="pip-ring">
-        <ProgressRing fraction={fraction} />
-        <div className="pip-ring__label">
-          {layout === 'portrait' && (
-            <div className="pip-mode">
-              <Mascot size={MASCOT_SIZE} decorative />
-              <span>{label}</span>
-            </div>
-          )}
-          <div className="pip-time">{formatTime(remainingMs)}</div>
-          {layout === 'portrait' && controls}
-        </div>
-      </div>
-      {layout === 'landscape' && (
-        <div className="pip-aside">
-          <div className="pip-mode">
-            <Mascot size={MASCOT_SIZE} decorative />
-            <span>{label}</span>
-          </div>
+      {layout === 'portrait' ? (
+        <>
+          {banner}
+          {ring}
+          {dots}
           {controls}
-        </div>
+          {stop}
+        </>
+      ) : (
+        <>
+          {ring}
+          <div className="pip-info">
+            {banner}
+            {dots}
+            {controls}
+            {stop}
+          </div>
+        </>
       )}
     </div>
   )
