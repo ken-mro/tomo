@@ -411,8 +411,16 @@ button,
   align-items: center;
   gap: 14px;
 }
-.stop-alarm {
-  margin-top: -4px;
+/* Banner hint shown while the alarm flashes (replaces the old Stop button):
+   a small pointer icon + "click anywhere to stop" message. */
+.alarm-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.alarm-hint svg {
+  flex: none;
+  opacity: 0.8;
 }
 
 /* ----- settings panel ------------------------------------------------------- */
@@ -744,21 +752,23 @@ input[type='range'] {
   font-size: 12px;
   letter-spacing: 0.5px;
 }
-/* Slim the labelled controls so reset + start + skip fit the narrow window. */
+/* Slim the labelled controls so reset + start + skip fit the narrow window —
+   including when the (non-wrapping) primary label is a wider translation. */
 .pip-root .controls {
-  gap: 10px;
+  gap: 8px;
 }
 .pip-root .btn--primary {
   min-width: 0;
-  padding: 11px 20px;
+  padding: 11px 16px;
   font-size: 15px;
+  /* Keep the label on one line so longer translations (e.g. Japanese "スタート")
+     don't wrap inside the narrow window. Scoped to PiP so it can't cause
+     overflow on full-width buttons elsewhere (e.g. the settings panel). */
+  white-space: nowrap;
 }
 .pip-root .btn--icon {
   width: 38px;
   height: 38px;
-}
-.pip-stop {
-  margin-top: -2px;
 }
 .pip-root.is-alarm {
   animation: pip-flash 0.7s steps(1) infinite;
@@ -919,9 +929,6 @@ input[type='range'] {
     font-size: 12px;
   }
   .app .today-count {
-    margin-top: 0;
-  }
-  .app .stop-alarm {
     margin-top: 0;
   }
 }
