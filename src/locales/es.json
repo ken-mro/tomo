@@ -36,7 +36,7 @@
   },
   "alarm": {
     "heading": "¡Se acabó el tiempo!",
-    "stop": "Detener alarma"
+    "dismiss": "Haz clic en cualquier parte para detener el parpadeo"
   },
   "settings": {
     "title": "Ajustes",

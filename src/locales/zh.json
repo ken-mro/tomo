@@ -35,7 +35,7 @@
   },
   "alarm": {
     "heading": "时间到！",
-    "stop": "停止闹铃"
+    "dismiss": "点击任意位置即可停止闪烁"
   },
   "settings": {
     "title": "设置",
