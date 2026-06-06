@@ -8,6 +8,7 @@ import { TimerRing } from './components/TimerRing'
 import { ProgressDots } from './components/ProgressDots'
 import { Controls } from './components/Controls'
 import { Mascot } from './components/Mascot'
+import { DismissHint } from './components/DismissHint'
 import { SettingsPanel } from './components/Settings'
 import { PipTimer } from './components/PipTimer'
 
@@ -76,9 +77,17 @@ export default function App() {
         alarmAudioRef.current = null
       }
       // When background audio is on, the alarm was pre-scheduled on the audio
-      // clock (so it can sound with the screen off); only fall back to playing
-      // here if that scheduling isn't active, to avoid a double alarm.
-      if (!settings.backgroundAlarm || !isAlarmArmed()) {
+      // clock (so it can sound with the screen off). That schedule rides the
+      // audio hardware clock, which on some systems (notably Windows/Edge) drifts
+      // from wall-clock time over a long interval and can fire a touch early or
+      // late. So if we're in the foreground — where this callback fires on the
+      // wall clock, within a tick of the real end time — play the alarm now for
+      // accurate timing and cancel the (possibly drifted) scheduled one. Only
+      // lean on the pre-scheduled alarm when actually backgrounded, where timers
+      // are throttled and it's the only thing that fires on time.
+      const visible = document.visibilityState === 'visible'
+      if (!settings.backgroundAlarm || !isAlarmArmed() || visible) {
+        if (settings.backgroundAlarm && isAlarmArmed()) silenceAlarm()
         void playAlarm(settings.sound, settings.volume).then((a) => {
           if (seq !== alarmSeq.current) {
             a?.pause()
@@ -281,7 +290,12 @@ export default function App() {
         onOpenSettings={() => setSettingsOpen(true)}
       />
 
-      <main className="timer-card">
+      {/* While the alarm is pulsing, a click anywhere in the timer card stops it
+          (the banner shows a hint saying so). Scoped to the card — not the whole
+          app — so clicks in the header or settings panel don't dismiss it. The
+          control buttons clear the alarm themselves, so the bubbled call here is
+          harmless. */}
+      <main className="timer-card" onClick={timer.alarmRinging ? timer.stopAlarm : undefined}>
         <ModeTabs mode={timer.mode} onSelect={timer.selectMode} />
 
         {/* The banner is always rendered (with a focus message during work) so
@@ -292,7 +306,9 @@ export default function App() {
             <p className="break-banner__heading">
               {timer.alarmRinging ? t('alarm.heading') : isBreak ? t('break.heading') : t('focus.heading')}
             </p>
-            {!timer.alarmRinging && (
+            {timer.alarmRinging ? (
+              <DismissHint />
+            ) : (
               <p className="break-banner__sub">{isBreak ? t('break.subheading') : t('focus.subheading')}</p>
             )}
           </div>
@@ -332,12 +348,6 @@ export default function App() {
           </div>
 
           <Controls running={timer.running} started={started} onToggle={handleToggle} onReset={timer.reset} onSkip={timer.skip} />
-
-          {timer.alarmRinging && (
-            <button className="btn btn--soft stop-alarm" onClick={timer.stopAlarm}>
-              {t('alarm.stop')}
-            </button>
-          )}
         </div>
       </main>
 

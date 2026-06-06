@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import type { Mode, PipLayout } from '../types'
 import { Controls } from './Controls'
+import { DismissHint } from './DismissHint'
 import { Mascot } from './Mascot'
 import { ProgressDots } from './ProgressDots'
 import { TimerRing } from './TimerRing'
@@ -56,7 +57,9 @@ export function PipTimer({
       <Mascot size={MASCOT_SIZE} className="break-banner__mascot" decorative />
       <div>
         <p className="break-banner__heading">{heading}</p>
-        {!alarm && (
+        {alarm ? (
+          <DismissHint />
+        ) : (
           <p className="break-banner__sub">{isBreak ? t('break.subheading') : t('focus.subheading')}</p>
         )}
       </div>
@@ -69,21 +72,21 @@ export function PipTimer({
   )
   const dots = <ProgressDots count={cycleCount} total={longEvery} />
   const controls = <Controls running={running} started={started} onToggle={onToggle} onReset={onReset} onSkip={onSkip} />
-  const stop = alarm && (
-    <button className="btn btn--soft pip-stop" onClick={onStopAlarm}>
-      {t('alarm.stop')}
-    </button>
-  )
 
   return (
-    <div className={`pip-root pip-root--${layout} mode-${mode}${alarm ? ' is-alarm' : ''}`}>
+    <div
+      className={`pip-root pip-root--${layout} mode-${mode}${alarm ? ' is-alarm' : ''}`}
+      // While the window is flashing an alarm, a click anywhere in it stops the
+      // blinking (the banner shows a hint saying so). The control buttons already
+      // clear the alarm themselves, so the bubbled handler is harmless.
+      onClick={alarm ? onStopAlarm : undefined}
+    >
       {layout === 'portrait' ? (
         <>
           {banner}
           {ring}
           {dots}
           {controls}
-          {stop}
         </>
       ) : (
         <>
@@ -92,7 +95,6 @@ export function PipTimer({
             {banner}
             {dots}
             {controls}
-            {stop}
           </div>
         </>
       )}
