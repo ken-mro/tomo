@@ -105,17 +105,30 @@ export function useTimer(settings: Settings, onIntervalEnd: (e: IntervalEnd) => 
   // run state or target end time changes — the 200ms tick itself does not.
   useEffect(() => {
     if (!running || endTime == null) return
+    let done = false
+    const finish = () => {
+      // Complete exactly once, even if the timeout and the tick race at the
+      // boundary, or under heavy main-thread load.
+      if (done) return
+      done = true
+      clearInterval(id)
+      clearTimeout(timeout)
+      handleComplete()
+    }
+    // Tick the display every 200ms; this is also a backstop for completion if the
+    // precise timeout is delayed (e.g. throttled while backgrounded).
     const id = setInterval(() => {
-      if (Date.now() >= endTime) {
-        // Stop this interval immediately so completion can only fire once, even
-        // under heavy main-thread load (don't rely on the re-render to clear it).
-        clearInterval(id)
-        handleComplete()
-      } else {
-        forceTick((n) => n + 1)
-      }
+      if (Date.now() >= endTime) finish()
+      else forceTick((n) => n + 1)
     }, 200)
-    return () => clearInterval(id)
+    // Fire right at the end instead of waiting for the next 200ms tick, so the
+    // foreground alarm and the display flip land on the real end time, not up to
+    // ~200ms late.
+    const timeout = setTimeout(finish, Math.max(0, endTime - Date.now()))
+    return () => {
+      clearInterval(id)
+      clearTimeout(timeout)
+    }
   }, [running, endTime, handleComplete])
 
   // The displayed remaining time is derived from timestamps so it never drifts.

@@ -21,6 +21,10 @@ let silentUri = ''
 let scheduled: AudioBufferSourceNode | null = null
 // Epoch ms the scheduled alarm fires, so we can tell "already playing" from "still pending".
 let scheduledEndMs = 0
+// AudioContext time the scheduled source actually starts producing sound. Used to
+// tell "this alarm has been audibly ringing for a while" (we refocused mid-alarm)
+// from "it just reached the boundary" — purely on the audio clock, no wall-clock.
+let scheduledStartTime = 0
 // Increments on every arm/disarm so a slow async decode can't schedule a stale alarm.
 let token = 0
 let armed = false
@@ -197,6 +201,52 @@ export function isAlarmArmed(): boolean {
   return armed
 }
 
+/**
+ * Whether the scheduled alarm has been audibly ringing for a moment already —
+ * true only once its sound started a half-second ago. Lets the foreground path
+ * leave an in-progress alarm alone (e.g. we refocused mid-alarm) instead of
+ * cutting it off and restarting it, while still treating a just-reached boundary
+ * as "not yet ringing" so it can be replaced with an accurate immediate play.
+ */
+export function isAlarmFiring(): boolean {
+  return scheduled != null && ctx != null && ctx.currentTime - scheduledStartTime > 0.5
+}
+
+/**
+ * Play the alarm immediately on the audio clock using the already-decoded buffer.
+ * Returns false (so the caller can fall back to HTMLAudio) when no context or
+ * cached buffer is ready — e.g. background audio is disabled, or a custom sound
+ * (which isn't pre-decoded) is selected. Firing "now" carries no decode latency
+ * and no scheduling drift, so the foreground alarm lands on the wall-clock moment
+ * the interval ended. Reuses the `scheduled` slot so the existing stop paths
+ * (silenceAlarm / the alarm-clear effect) tear it down unchanged.
+ */
+export function playAlarmNow(soundId: string, volume: number): boolean {
+  const c = ctx
+  if (!c) return false
+  const buf = soundId === CUSTOM_SOUND_ID ? undefined : buffers.get(soundId)
+  if (!buf) return false
+  if (c.state === 'suspended') void c.resume().catch(() => {})
+  clearScheduled(true)
+  const src = c.createBufferSource()
+  src.buffer = buf
+  const g = c.createGain()
+  g.gain.value = Math.max(0, Math.min(1, volume))
+  src.connect(g).connect(c.destination)
+  src.onended = () => {
+    if (scheduled === src) {
+      scheduled = null
+      armed = false
+    }
+  }
+  src.start()
+  scheduled = src
+  scheduledEndMs = Date.now() // already firing
+  scheduledStartTime = c.currentTime
+  armed = true
+  return true
+}
+
 /** Schedule the alarm to fire at `endTimeMs` (epoch ms), keeping the context alive until then. */
 export async function armAlarm(soundId: string, volume: number, endTimeMs: number): Promise<void> {
   const mine = ++token
@@ -228,6 +278,7 @@ export async function armAlarm(soundId: string, volume: number, endTimeMs: numbe
     src.start(when)
     scheduled = src
     scheduledEndMs = endTimeMs
+    scheduledStartTime = when
     armed = true
   } catch {
     armed = false
@@ -253,6 +304,10 @@ export function testAlarm(soundId: string, volume: number, delayMs = 10000): num
 /** Stop a playing or pending scheduled alarm (e.g. the Stop button), leaving the keepalive in place. */
 export function silenceAlarm(): void {
   clearScheduled(true)
+  // Nothing is scheduled anymore. Clear `armed` explicitly: clearScheduled nulls
+  // `scheduled`, which defeats the source's onended cleanup (its `scheduled === src`
+  // check no longer matches), so it can't reset `armed` for us.
+  armed = false
 }
 
 /** Cancel a pending alarm (lets a just-fired one finish) and let the keepalive idle. */
