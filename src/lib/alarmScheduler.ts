@@ -213,18 +213,23 @@ export function isAlarmFiring(): boolean {
 }
 
 /**
- * Play the alarm immediately on the audio clock using the already-decoded buffer.
- * Returns false (so the caller can fall back to HTMLAudio) when no context or
- * cached buffer is ready — e.g. background audio is disabled, or a custom sound
- * (which isn't pre-decoded) is selected. Firing "now" carries no decode latency
- * and no scheduling drift, so the foreground alarm lands on the wall-clock moment
- * the interval ended. Reuses the `scheduled` slot so the existing stop paths
- * (silenceAlarm / the alarm-clear effect) tear it down unchanged.
+ * Play the alarm immediately on the audio clock using an already-decoded buffer.
+ * Returns false (so the caller can fall back to HTMLAudio) only when no decoded
+ * buffer is on hand — i.e. there's no AudioContext, or nothing was pre-decoded
+ * for this sound. Built-in sounds come from the `buffers` cache; a custom sound
+ * isn't cached, but armAlarm decodes it onto the scheduled source, so reuse that
+ * buffer when present. Firing "now" carries no decode latency and no scheduling
+ * drift, so the foreground alarm lands on the wall-clock moment the interval
+ * ended. Reuses the `scheduled` slot so the existing stop paths (silenceAlarm /
+ * the alarm-clear effect) tear it down unchanged.
  */
 export function playAlarmNow(soundId: string, volume: number): boolean {
   const c = ctx
   if (!c) return false
-  const buf = soundId === CUSTOM_SOUND_ID ? undefined : buffers.get(soundId)
+  // Built-in: cached buffer. Custom: not cached, but reuse the buffer armAlarm
+  // already decoded onto the scheduled source (read before clearScheduled nulls it).
+  const buf =
+    soundId === CUSTOM_SOUND_ID ? scheduled?.buffer ?? null : buffers.get(soundId) ?? null
   if (!buf) return false
   if (c.state === 'suspended') void c.resume().catch(() => {})
   clearScheduled(true)

@@ -111,12 +111,12 @@ export default function App() {
           // play out rather than cutting it off and restarting from the top.
         } else {
           // At the boundary in the foreground: fire the decoded buffer immediately
-          // — no decode latency, no drift. playAlarmNow() drops the (possibly
+          // — no decode latency, no drift. playAlarmNow() reuses the buffer the
+          // schedule already decoded (built-in or custom) and drops the (possibly
           // drifted) pending schedule itself when it succeeds, so we don't silence
-          // it up front. Only when no buffer is primed (e.g. a custom sound, which
-          // isn't pre-decoded) do we silence the schedule and fall back to
-          // HTMLAudio — so a successful immediate play never leaves us with no
-          // alarm.
+          // it up front. Only when no decoded buffer is on hand do we silence the
+          // schedule and fall back to HTMLAudio — so a successful immediate play
+          // never leaves us with no alarm.
           if (!playAlarmNow(settings.sound, settings.volume)) {
             silenceAlarm()
             playFallback()
